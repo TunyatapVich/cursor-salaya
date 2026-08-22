@@ -33,7 +33,7 @@ export default function Page() {
       <header className="mx-auto max-w-[1700px] pb-10">
         <h1 className="text-title font-medium">Shared memory — screens</h1>
         <p className="mt-2 max-w-[60ch] text-ai text-muted">
-          The AI describes what it can see. The family writes back the part that matters. Nine screens, 390px, one
+          Take a photo. Keep it. Find it later. Nine screens, 390px, one
           primary action each.
         </p>
         <Link href="/" className="mt-3 inline-block text-meta text-accent underline underline-offset-4">
@@ -45,11 +45,11 @@ export default function Page() {
         <Frame n={1} title="Upload" note="The only thing the poster ever has to do.">
           <Upload />
         </Frame>
-        <Frame n={2} title="Explain" note="The AI reads the photo. One quiet line, then the words arrive.">
-          <Generating photo={demo.photo} />
-        </Frame>
-        <Frame n={3} title="Explain — ready" note="Description, tags, optional note. Keep is the only action.">
+        <Frame n={2} title="Preview" note="This shot or another. One decision.">
           <AddContext photo={demo.photo} />
+        </Frame>
+        <Frame n={3} title="Saved" note="Then History opens with the new photo first.">
+          <Generating photo={demo.photo} />
         </Frame>
         <Frame n={4} title="Post detail" note="Description block, tags, then what the family wrote.">
           <PostDetail post={demo} />

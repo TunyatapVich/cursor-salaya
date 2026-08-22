@@ -12,7 +12,6 @@ import {
   type Period,
   type Post,
   type Reply,
-  describePhoto,
   groupPosts,
   hasUnread,
   posts as allPosts,
@@ -275,87 +274,39 @@ export function Upload({ onPick }: { onPick?: (url: string) => void }) {
   );
 }
 
-/* ---------- 2 + 3. Explain ---------- */
+/* ---------- 2. Preview ---------- */
 
-export function Explain({
+export function Preview({
   photo,
   onKeep,
   onRetake,
-  preview,
 }: {
   photo: string;
-  onKeep?: (note: string, info: { description: string; tags: string[] }) => void;
+  onKeep?: () => void;
   onRetake?: () => void;
-  preview?: "looking" | "ready";
 }) {
-  const info = describePhoto(photo);
-  const [looking, setLooking] = useState(preview !== "ready");
-  const [note, setNote] = useState("");
-
-  useEffect(() => {
-    if (preview) {
-      setLooking(preview === "looking");
-      return;
-    }
-    const t = setTimeout(() => setLooking(false), 1800);
-    return () => clearTimeout(t);
-  }, [photo, preview]);
-
   return (
     <Screen>
-      <div className="flex h-full flex-col bg-bg">
-        <div className="flex shrink-0 items-center px-5 pt-5">
-          <button type="button" onClick={onRetake} className="text-meta text-muted">
+      <div className="flex h-full flex-col bg-black text-white">
+        <div className="flex items-center justify-between px-6 pt-5">
+          <button type="button" onClick={onRetake} className="text-meta text-white/70">
             Retake
           </button>
+          <span className="text-meta text-white/40">Preview</span>
+          <span className="w-10" aria-hidden />
         </div>
 
-        <div className="px-5 pt-4">
-          <img
-            src={photo}
-            alt=""
-            className={`aspect-square w-full rounded-[32px] bg-tint object-cover ${looking ? "opacity-55" : ""}`}
-          />
+        <div className="flex flex-1 items-center px-[18px]">
+          <img src={photo} alt="" className="aspect-square w-full rounded-[40px] object-cover" />
         </div>
 
-        <div className="flex-1 overflow-y-auto px-5 pt-6">
-          <p className="text-meta text-muted">What&rsquo;s in this photo</p>
-          {looking ? (
-            <>
-              <p className="mt-3 text-ai text-muted">Reading the photo&hellip;</p>
-              <div className="mt-5 h-px w-36 overflow-hidden bg-line">
-                <div className="sweep h-px w-1/3 bg-accent" />
-              </div>
-            </>
-          ) : (
-            <>
-              <p className="mt-3 text-ai">{info.description}</p>
-              {info.tags.length > 0 ? (
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {info.tags.map((t) => (
-                    <Chip key={t}>{t}</Chip>
-                  ))}
-                </div>
-              ) : null}
-            </>
-          )}
-        </div>
-
-        <div className="shrink-0 px-5 pt-3 pb-7">
-          <input
-            value={note}
-            onChange={(e) => setNote(e.target.value)}
-            placeholder="Add a note, or leave it"
-            disabled={looking}
-            className="h-14 w-full rounded-card border border-line bg-surface px-4 text-body outline-none placeholder:text-muted disabled:opacity-40"
-          />
+        <div className="px-8 pb-12 pt-5">
           <button
             type="button"
-            disabled={looking}
-            onClick={() => onKeep?.(note, info)}
-            className="mt-3 h-14 w-full rounded-card bg-accent text-body font-medium text-white disabled:opacity-40"
+            onClick={onKeep}
+            className="h-14 w-full rounded-full bg-white text-body font-medium text-black"
           >
-            Keep
+            Send to History
           </button>
         </div>
       </div>
@@ -363,12 +314,26 @@ export function Explain({
   );
 }
 
+/* ---------- 3. Saved ---------- */
+
+export function Saved({ photo }: { photo: string }) {
+  return (
+    <Screen>
+      <div className="flex h-full flex-col items-center justify-center bg-black px-8 text-white">
+        <img src={photo} alt="" className="size-40 rounded-[28px] object-cover" />
+        <p className="mt-8 text-body">Saved</p>
+        <p className="mt-2 text-meta text-white/45">Opening History&hellip;</p>
+      </div>
+    </Screen>
+  );
+}
+
 export function AddContext({ photo }: { photo: string; onContinue?: (caption: string) => void; onSkip?: () => void }) {
-  return <Explain photo={photo} preview="ready" />;
+  return <Preview photo={photo} />;
 }
 
 export function Generating({ photo }: { photo: string }) {
-  return <Explain photo={photo} preview="looking" />;
+  return <Saved photo={photo} />;
 }
 
 /* ---------- 4 + 5. Post detail, empty state, writing a response ---------- */
@@ -459,7 +424,7 @@ export function PostDetail({
 
         <div className="space-y-5 px-5 pt-5">
           {post.caption ? <p className="text-body">{post.caption}</p> : null}
-          <AiBlock description={post.description} />
+          {post.description ? <AiBlock description={post.description} /> : null}
           <TagRow
             tags={tags}
             onRemove={(t) => setTags(tags.filter((x) => x !== t))}
