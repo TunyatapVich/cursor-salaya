@@ -1,0 +1,119 @@
+[
+  {
+    "id": "tablets",
+    "photo": "/library/01-tablets.png",
+    "day": 0,
+    "caption": "the new medicine from the hospital",
+    "prompt": "First-person phone photo from an older person at chest height, looking slightly down, slightly off-centre. A packet of white tablets on a wooden kitchen table, the label reading TAKE ONE TABLET AFTER FOOD, a blue helmet on the shelf behind next to a folded towel. Natural window light, ordinary home, no people, 4:5.",
+    "description": "A packet of white tablets on a wooden table. The label says to take one tablet after food. There is a blue helmet on the shelf behind, next to a folded towel.",
+    "tags": ["medicine", "kitchen"],
+    "replies": [
+      { "who": "Anna", "when": "7:20 pm", "text": "One tablet, after dinner — not before. I'll ring you at seven to check." },
+      { "who": "Ben", "when": "8:04 pm", "text": "That's the same one Dr Owens gave you in June. Keep it by the kettle so you see it." }
+    ]
+  },
+  {
+    "id": "keys",
+    "photo": "/library/02-keys.png",
+    "day": 0,
+    "prompt": "First-person phone snapshot from an older person in a hallway, held a little low. Three keys on a ring in a blue ceramic bowl by a front door. One key has a red plastic cap. Reading glasses beside the bowl. Ordinary home, natural indoor light, no people, 4:5.",
+    "description": "Three keys on a ring in a blue ceramic bowl by a front door. One key has a red plastic cap. A pair of reading glasses is beside the bowl.",
+    "tags": ["keys", "hallway"],
+    "replies": []
+  },
+  {
+    "id": "soup",
+    "photo": "/library/03-soup.png",
+    "day": 1,
+    "caption": "lunch",
+    "prompt": "First-person phone photo from an elderly person sitting at a kitchen table, looking down. A bowl of noodle soup with sliced spring onion on a green placemat, steam rising, a glass of water to the right. Wooden table, warm window light, ordinary homemade meal, no people, 4:5.",
+    "description": "A bowl of noodle soup with sliced spring onion on a green placemat. Steam is rising. A glass of water sits to the right of the bowl.",
+    "tags": ["food", "kitchen"],
+    "replies": [
+      { "who": "Grace", "when": "Yesterday", "text": "That looks so good. Save me some on Sunday please." }
+    ]
+  },
+  {
+    "id": "letter",
+    "photo": "/library/04-letter.png",
+    "day": 2,
+    "caption": "this came today",
+    "prompt": "First-person phone photo from an older person looking down at a kitchen table. A printed letter, the largest heading YOUR ANNUAL STATEMENT, a date near the top, a mug at the edge of the frame. Soft indoor light, slightly wrinkled paper, no real company names, no people, 4:5.",
+    "description": "A printed letter on a table. The largest text says Your annual statement. A date is near the top. A mug sits at the edge of the frame.",
+    "tags": ["documents"],
+    "replies": [
+      { "who": "Ben", "when": "Wed", "text": "Nothing to do with this one — it's just the yearly summary. Put it in the blue folder." },
+      { "who": "Anna", "when": "Wed", "text": "Agreed, no action needed. I'll look at it when I'm over." }
+    ]
+  },
+  {
+    "id": "tomatoes",
+    "photo": "/library/05-tomatoes.png",
+    "day": 3,
+    "prompt": "First-person phone snapshot from an older person at a kitchen window, looking slightly down at the sill. Six small tomatoes, four red and two still green, garden and a wooden fence through the glass. Afternoon light, dusty sill, ordinary home, no people, 4:5.",
+    "description": "Six small tomatoes on a windowsill, four red and two still green. Behind them a garden with a wooden fence in afternoon light.",
+    "tags": ["outdoors", "food"],
+    "replies": [
+      { "who": "Grace", "when": "Tue", "text": "The green ones will turn if you leave them another few days." }
+    ]
+  },
+  {
+    "id": "helmet",
+    "photo": "/library/06-helmet.png",
+    "day": 4,
+    "caption": "is this the one",
+    "prompt": "First-person phone photo from an elderly person in a hallway, looking slightly up at a wooden shelf. A blue cycling helmet beside a folded towel and a small basket. A dark green jacket on a hook to the left. Ordinary home, natural indoor light, slightly off-centre, no people, 4:5.",
+    "description": "A blue cycling helmet on a wooden shelf beside a folded towel and a small basket. A dark green jacket hangs on a hook to the left.",
+    "tags": ["outdoors"],
+    "replies": [
+      { "who": "Ben", "when": "Mon", "text": "That's Grace's. Hers is the blue one — mine's the black one in the car." }
+    ]
+  },
+  {
+    "id": "kettle",
+    "photo": "/library/07-kettle.png",
+    "day": 5,
+    "prompt": "First-person phone snapshot from an older person at a kitchen counter, looking slightly down. A white kettle unplugged, cable coiled beside it, wall socket switched off. Warm tiles, natural light, ordinary kitchen, no people, no brand logos, 4:5.",
+    "description": "A white kettle on a kitchen counter, unplugged, with the cable coiled beside it. A wall socket above the counter is switched off.",
+    "tags": ["kitchen"],
+    "replies": [
+      { "who": "Anna", "when": "Sun", "text": "Perfect — that's exactly how to leave it. Thank you." }
+    ]
+  },
+  {
+    "id": "inhaler",
+    "photo": "/library/08-inhaler.png",
+    "day": 6,
+    "caption": "found it in the drawer",
+    "prompt": "First-person overhead phone photo from an elderly person looking down into an open wooden drawer. A blue inhaler among pens and a tape measure. Label text small and partly hidden. Ordinary cluttered bedroom drawer, warm indoor light, no people, 4:5.",
+    "description": "A blue inhaler lying in an open drawer with pens and a tape measure. The label text is small and partly hidden by the drawer edge.",
+    "tags": ["medicine", "bedroom"],
+    "replies": [
+      { "who": "Anna", "when": "Sat", "text": "That's the old one — the date on it has passed. The new one is in the bathroom cabinet, top shelf." },
+      { "who": "Ben", "when": "Sat", "text": "Bin that one so they don't get mixed up." }
+    ]
+  },
+  {
+    "id": "organiser",
+    "photo": "/library/09-organiser.png",
+    "day": 8,
+    "prompt": "First-person phone photo from an older person at a kitchen table, looking down. A weekly pill organiser with seven compartments, open. Monday, Tuesday and Wednesday empty; the rest hold two tablets each. Soft morning window light, wooden table, ordinary home, no people, 4:5.",
+    "description": "A weekly pill organiser with seven compartments, open. The Monday, Tuesday and Wednesday compartments are empty; the rest hold two tablets each.",
+    "tags": ["medicine", "kitchen"],
+    "replies": [
+      { "who": "Anna", "when": "Aug 9", "text": "You're up to date. I'll refill the whole thing on Saturday when I'm there." },
+      { "who": "Ben", "when": "Aug 9", "text": "Nice one. Keep it where you can see it." }
+    ]
+  },
+  {
+    "id": "shopping-list",
+    "photo": "/library/10-shopping-list.png",
+    "day": 11,
+    "prompt": "First-person phone snapshot from an elderly person looking down at a kitchen table. A handwritten shopping list on lined paper, slightly shaky handwriting, held down by a mug of tea. Two eggs and a loaf of bread beside it. Ordinary kitchen, natural light, no brand logos, no people, 4:5.",
+    "description": "A handwritten shopping list on lined paper, held down by a mug. Two eggs and a loaf of bread sit beside it on the table.",
+    "tags": ["documents", "kitchen"],
+    "replies": [
+      { "who": "Grace", "when": "Aug 12", "text": "Milk, bread, eggs — you've got the lot. I'll pick up the rest on Friday." }
+    ]
+  }
+]

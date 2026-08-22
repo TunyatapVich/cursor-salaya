@@ -277,7 +277,7 @@ export function Upload({ onPick }: { onPick?: (url: string) => void }) {
 
 /* ---------- 2. Describe ---------- */
 
-export function Describe({
+function DescribeBody({
   photo,
   onSave,
   preview,
@@ -287,18 +287,16 @@ export function Describe({
   preview?: "looking" | "ready";
 }) {
   const info = describePhoto(photo);
-  const [looking, setLooking] = useState(preview !== "ready");
+  const [liveReady, setLiveReady] = useState(false);
+  const looking = preview !== undefined ? preview === "looking" : !liveReady;
   const [tags, setTags] = useState(info.tags);
   const [note, setNote] = useState("");
 
   useEffect(() => {
-    if (preview) {
-      setLooking(preview === "looking");
-      return;
-    }
-    const t = setTimeout(() => setLooking(false), 1600);
+    if (preview !== undefined) return;
+    const t = setTimeout(() => setLiveReady(true), 1600);
     return () => clearTimeout(t);
-  }, [photo, preview]);
+  }, [preview]);
 
   return (
     <Screen>
@@ -348,6 +346,14 @@ export function Describe({
       </div>
     </Screen>
   );
+}
+
+export function Describe(props: {
+  photo: string;
+  onSave?: (info: { description: string; tags: string[]; caption: string }) => void;
+  preview?: "looking" | "ready";
+}) {
+  return <DescribeBody key={props.photo} {...props} />;
 }
 
 export function AddContext({ photo }: { photo: string; onContinue?: (caption: string) => void; onSkip?: () => void }) {

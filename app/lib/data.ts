@@ -1,5 +1,7 @@
 // ponytail: seeded mockup data, no store. Swap `posts` for a real feed when there is one.
 
+import library from "./library.json";
+
 export type Reply = { who: string; when: string; text: string };
 
 export type Post = {
@@ -13,18 +15,7 @@ export type Post = {
   replies: Reply[];
 };
 
-export const GALLERY = [
-  "/photos/laundry.jpg",
-  "/photos/night-street.jpg",
-  "/photos/fried-rice.jpg",
-  "/photos/campus-walk.jpg",
-  "/photos/campus-path.jpg",
-  "/photos/tom-yum.jpg",
-  "/photos/khao-kha-moo.jpg",
-  "/photos/classroom.jpg",
-  "/photos/painting-night.jpg",
-  "/photos/meiji-milk.jpg",
-];
+export const GALLERY = library.map((item) => item.photo);
 
 const photo = (seed: string) => {
   let n = 0;
@@ -33,114 +24,14 @@ const photo = (seed: string) => {
 };
 
 const rich: Omit<Post, "id">[] = [
-  {
-    photo: "/photos/laundry.jpg",
-    day: 0,
-    caption: "laundry day",
-    description:
-      "A row of silver Speed Queen washing machines in a tiled laundromat. Machine 24 is in front. Someone in a dark shirt stands by a yellow cart, loading a machine.",
-    tags: ["outdoors"],
-    replies: [
-      { who: "Anna", when: "7:20 pm", text: "Don't mix the whites. I'll pick you up when the last load is done." },
-      { who: "Ben", when: "8:04 pm", text: "Machine 24 is the one that actually spins. The others take forever." },
-    ],
-  },
-  {
-    photo: "/photos/night-street.jpg",
-    day: 0,
-    description:
-      "A dark street corner at night. Red traffic lights hang over the road. A glowing sign reads 19th, and a parking board shows SPACES 501.",
-    tags: ["outdoors"],
-    replies: [],
-  },
-  {
-    photo: "/photos/fried-rice.jpg",
-    day: 1,
-    caption: "lunch",
-    description:
-      "A dark blue bowl of fried rice with a fried egg on top, fork and spoon crossed in the bowl. An iPad behind it is playing One Piece on a wooden table.",
-    tags: ["food", "kitchen"],
-    replies: [
-      { who: "Grace", when: "Yesterday", text: "That looks so good. Save me some on Sunday please." },
-    ],
-  },
-  {
-    photo: "/photos/campus-walk.jpg",
-    day: 2,
-    caption: "walking back",
-    description:
-      "A person in a light hoodie and black shorts walking down a tree-lined campus path, Nike bag on one shoulder. Another person walks ahead toward a brick building.",
-    tags: ["outdoors"],
-    replies: [
-      { who: "Ben", when: "Wed", text: "Text when you get to the gate." },
-      { who: "Anna", when: "Wed", text: "Hot out. Take the shaded side." },
-    ],
-  },
-  {
-    photo: "/photos/campus-path.jpg",
-    day: 3,
-    description:
-      "A long concrete sidewalk between grass and trees, with a red brick building and a silver awning on the right. A few people walk in the distance.",
-    tags: ["outdoors"],
-    replies: [
-      { who: "Grace", when: "Tue", text: "That's the short way to the hall." },
-    ],
-  },
-  {
-    photo: "/photos/tom-yum.jpg",
-    day: 4,
-    caption: "dinner",
-    description:
-      "A white bowl of tom yum with noodles, a fishball, and a lot of green herbs, next to a plate of rice and fried wonton on a dark wooden table.",
-    tags: ["food"],
-    replies: [
-      { who: "Ben", when: "Mon", text: "Ask for less lime next time if it's too sharp." },
-    ],
-  },
-  {
-    photo: "/photos/khao-kha-moo.jpg",
-    day: 5,
-    description:
-      "A plate of khao kha moo held outdoors: braised pork, a halved egg, and greens on rice. Picnic tables and tree shade in the background.",
-    tags: ["food", "outdoors"],
-    replies: [
-      { who: "Anna", when: "Sun", text: "Eat it while it's hot. The egg is the best bit." },
-    ],
-  },
-  {
-    photo: "/photos/classroom.jpg",
-    day: 6,
-    caption: "in class",
-    description:
-      "A lecture hall screen showing an English worksheet, In-class activity 2 on conditionals. A student with glasses sits in front, looking at a phone.",
-    tags: ["documents"],
-    replies: [
-      { who: "Anna", when: "Sat", text: "Second conditional, page 35. You've got this." },
-      { who: "Ben", when: "Sat", text: "Pick the queue-cutting one, it's the easiest to talk about." },
-    ],
-  },
-  {
-    photo: "/photos/painting-night.jpg",
-    day: 8,
-    description:
-      "A folding table on grass at night with a paint palette, brushes in a red cup, and a small round landscape painting. Hands hold a phone at the edge of the frame.",
-    tags: ["outdoors"],
-    replies: [
-      { who: "Grace", when: "Aug 12", text: "Keep that little painting. It's lovely." },
-    ],
-  },
-  {
-    photo: "/photos/meiji-milk.jpg",
-    day: 11,
-    caption: "desk",
-    description:
-      "A Meiji fat-free milk jug on a wooden desk, next to a white mouse, a black keyboard, and a monitor. Headphones sit behind the keyboard.",
-    tags: ["kitchen"],
-    replies: [
-      { who: "Anna", when: "Aug 9", text: "Check the date on the shoulder before you open it." },
-      { who: "Ben", when: "Aug 9", text: "Fat free is the blue one. Don't grab the full cream by mistake." },
-    ],
-  },
+  ...library.map((item) => ({
+    photo: item.photo,
+    day: item.day,
+    caption: item.caption,
+    description: item.description,
+    tags: item.tags,
+    replies: item.replies,
+  })),
   {
     photo: photo("market-stall"),
     day: 15,
