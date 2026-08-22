@@ -88,11 +88,11 @@ function PeriodTabs({ value, onChange }: { value: Period; onChange: (p: Period) 
     <div
       role="tablist"
       aria-label="Time period"
-      className="relative grid grid-cols-3 overflow-hidden rounded-full border border-white/70 bg-white/40 p-[3px] backdrop-blur-xl"
+      className="relative grid grid-cols-3 overflow-hidden rounded-full border border-line/70 bg-white/40 p-[3px] backdrop-blur-xl"
     >
       <span
         aria-hidden
-        className="absolute top-[3px] bottom-[3px] left-[3px] w-[calc((100%-6px)/3)] rounded-full bg-tint transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]"
+        className="absolute top-[3px] bottom-[3px] left-[3px] w-[calc((100%-6px)/3)] rounded-full border border-accent/35 bg-tint transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]"
         style={{ transform: `translateX(${i * 100}%)` }}
       />
       {PERIODS.map((p) => (
@@ -148,9 +148,13 @@ function TagRow({ tags, onRemove, onAdd }: { tags: string[]; onRemove?: (t: stri
           <HashTag key={t} label={t} onClick={() => onRemove?.(t)} />
         ))}
         {onAdd ? (
-          <Chip tone="plain" onClick={() => setOpen(!open)}>
-            + Add tag
-          </Chip>
+          <button
+            type="button"
+            onClick={() => setOpen(!open)}
+            className="shrink-0 py-2 text-name font-medium tracking-[0.02em] text-accent"
+          >
+            + tag
+          </button>
         ) : null}
       </div>
       {open && onAdd ? (
@@ -404,7 +408,7 @@ function DescribeBody({
             type="button"
             disabled={looking}
             onClick={() => onSave?.({ description: info.description, tags, caption: note.trim() })}
-            className="btn-primary h-14 w-full rounded-card text-body font-medium disabled:opacity-40"
+            className="btn-primary h-14 w-full rounded-full text-body font-medium disabled:opacity-40"
           >
             Save
           </button>
