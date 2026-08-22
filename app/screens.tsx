@@ -12,6 +12,7 @@ import {
   type Period,
   type Post,
   type Reply,
+  describePhoto,
   groupPosts,
   hasUnread,
   posts as allPosts,
@@ -274,61 +275,100 @@ export function Upload({ onPick }: { onPick?: (url: string) => void }) {
   );
 }
 
-/* ---------- 2. Add context ---------- */
+/* ---------- 2 + 3. Explain ---------- */
 
-export function AddContext({
+export function Explain({
   photo,
-  onContinue,
-  onSkip,
+  onKeep,
+  onRetake,
+  preview,
 }: {
   photo: string;
-  onContinue?: (caption: string) => void;
-  onSkip?: () => void;
+  onKeep?: (note: string, info: { description: string; tags: string[] }) => void;
+  onRetake?: () => void;
+  preview?: "looking" | "ready";
 }) {
-  const [caption, setCaption] = useState("");
+  const info = describePhoto(photo);
+  const [looking, setLooking] = useState(preview !== "ready");
+  const [note, setNote] = useState("");
+
+  useEffect(() => {
+    if (preview) {
+      setLooking(preview === "looking");
+      return;
+    }
+    const t = setTimeout(() => setLooking(false), 1800);
+    return () => clearTimeout(t);
+  }, [photo, preview]);
+
   return (
     <Screen>
-      <div className="flex-1 overflow-y-auto px-5 pt-6">
-        <img src={photo} alt="" className="aspect-4/5 w-full rounded-card bg-tint object-cover" />
-        <h1 className="mt-6 text-title font-medium">Anything to add?</h1>
-        <input
-          value={caption}
-          onChange={(e) => setCaption(e.target.value)}
-          placeholder="the new medicine from the hospital"
-          className="mt-4 h-14 w-full rounded-card border border-line bg-surface px-4 text-body outline-none placeholder:text-muted"
-        />
-        <p className="mt-2 text-meta text-muted">You can skip this.</p>
-      </div>
-      <div className="shrink-0 px-5 pt-4 pb-7">
-        <button
-          type="button"
-          onClick={() => onContinue?.(caption)}
-          className="h-14 w-full rounded-card bg-accent text-body font-medium text-white"
-        >
-          Continue
-        </button>
-        <button type="button" onClick={onSkip} className="h-14 w-full text-body text-muted">
-          Skip
-        </button>
+      <div className="flex h-full flex-col bg-bg">
+        <div className="flex shrink-0 items-center px-5 pt-5">
+          <button type="button" onClick={onRetake} className="text-meta text-muted">
+            Retake
+          </button>
+        </div>
+
+        <div className="px-5 pt-4">
+          <img
+            src={photo}
+            alt=""
+            className={`aspect-square w-full rounded-[32px] bg-tint object-cover ${looking ? "opacity-55" : ""}`}
+          />
+        </div>
+
+        <div className="flex-1 overflow-y-auto px-5 pt-6">
+          <p className="text-meta text-muted">What&rsquo;s in this photo</p>
+          {looking ? (
+            <>
+              <p className="mt-3 text-ai text-muted">Reading the photo&hellip;</p>
+              <div className="mt-5 h-px w-36 overflow-hidden bg-line">
+                <div className="sweep h-px w-1/3 bg-accent" />
+              </div>
+            </>
+          ) : (
+            <>
+              <p className="mt-3 text-ai">{info.description}</p>
+              {info.tags.length > 0 ? (
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {info.tags.map((t) => (
+                    <Chip key={t}>{t}</Chip>
+                  ))}
+                </div>
+              ) : null}
+            </>
+          )}
+        </div>
+
+        <div className="shrink-0 px-5 pt-3 pb-7">
+          <input
+            value={note}
+            onChange={(e) => setNote(e.target.value)}
+            placeholder="Add a note, or leave it"
+            disabled={looking}
+            className="h-14 w-full rounded-card border border-line bg-surface px-4 text-body outline-none placeholder:text-muted disabled:opacity-40"
+          />
+          <button
+            type="button"
+            disabled={looking}
+            onClick={() => onKeep?.(note, info)}
+            className="mt-3 h-14 w-full rounded-card bg-accent text-body font-medium text-white disabled:opacity-40"
+          >
+            Keep
+          </button>
+        </div>
       </div>
     </Screen>
   );
 }
 
-/* ---------- 3. Generating ---------- */
+export function AddContext({ photo }: { photo: string; onContinue?: (caption: string) => void; onSkip?: () => void }) {
+  return <Explain photo={photo} preview="ready" />;
+}
 
 export function Generating({ photo }: { photo: string }) {
-  return (
-    <Screen>
-      <div className="flex h-full flex-col px-5 pt-6">
-        <img src={photo} alt="" className="aspect-4/5 w-full rounded-card bg-tint object-cover opacity-45" />
-        <p className="mt-8 text-center text-body text-muted">Looking at the photo&hellip;</p>
-        <div className="mx-auto mt-5 h-px w-40 overflow-hidden bg-line">
-          <div className="sweep h-px w-1/3 bg-accent" />
-        </div>
-      </div>
-    </Screen>
-  );
+  return <Explain photo={photo} preview="looking" />;
 }
 
 /* ---------- 4 + 5. Post detail, empty state, writing a response ---------- */

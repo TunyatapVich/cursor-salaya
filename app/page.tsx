@@ -1,41 +1,33 @@
 "use client";
 
 import { useState } from "react";
-import { AddContext, Generating, Phone, PostDetail, Upload } from "./screens";
-import { describe, type Post } from "./lib/data";
+import { Explain, Phone, PostDetail, Upload } from "./screens";
+import { type Post } from "./lib/data";
 import { savePost } from "./lib/store";
 
 export default function Page() {
   const [photo, setPhoto] = useState<string | null>(null);
   const [post, setPost] = useState<Post | null>(null);
-  const [generating, setGenerating] = useState(false);
 
-  // ponytail: canned description on a timer. One vision call replaces both.
-  const generate = (caption: string) => {
-    setGenerating(true);
-    setTimeout(() => {
-      const next: Post = {
-        id: `live-${Date.now()}`,
-        photo: photo!,
-        day: 0,
-        caption: caption || undefined,
-        replies: [],
-        ...describe(),
-      };
-      savePost(next);
-      setPost(next);
-      setGenerating(false);
-    }, 2200);
+  const keep = (note: string, info: { description: string; tags: string[] }) => {
+    const next: Post = {
+      id: `live-${Date.now()}`,
+      photo: photo!,
+      day: 0,
+      caption: note.trim() || undefined,
+      replies: [],
+      ...info,
+    };
+    savePost(next);
+    setPost(next);
   };
 
   return (
     <Phone>
       {post ? (
         <PostDetail post={post} backHref="/archive" />
-      ) : generating && photo ? (
-        <Generating photo={photo} />
       ) : photo ? (
-        <AddContext photo={photo} onContinue={generate} onSkip={() => generate("")} />
+        <Explain photo={photo} onKeep={keep} onRetake={() => setPhoto(null)} />
       ) : (
         <Upload onPick={setPhoto} />
       )}

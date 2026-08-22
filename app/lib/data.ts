@@ -291,6 +291,12 @@ export const QUICK_REPLIES = ["Take after food", "Twice a day", "It's in the bat
 // ponytail: canned stand-in for the vision call. One model request replaces this.
 export const describe = () => ({
   description:
-    "A packet of white tablets on a wooden table. The label says to take one tablet after food. There is a blue helmet on the shelf behind, next to a folded towel.",
-  tags: ["medicine", "kitchen"],
+    "A moment from today. Someone in the family can write the part that matters.",
+  tags: ["outdoors"],
 });
+
+export function describePhoto(src: string) {
+  const match = posts.find((p) => p.photo === src);
+  if (match) return { description: match.description, tags: match.tags };
+  return describe();
+}

@@ -45,11 +45,11 @@ export default function Page() {
         <Frame n={1} title="Upload" note="The only thing the poster ever has to do.">
           <Upload />
         </Frame>
-        <Frame n={2} title="Add context" note="Optional, and the screen says so.">
-          <AddContext photo={demo.photo} />
-        </Frame>
-        <Frame n={3} title="Generating" note="Thin indeterminate line, no spinner, no cancel.">
+        <Frame n={2} title="Explain" note="The AI reads the photo. One quiet line, then the words arrive.">
           <Generating photo={demo.photo} />
+        </Frame>
+        <Frame n={3} title="Explain — ready" note="Description, tags, optional note. Keep is the only action.">
+          <AddContext photo={demo.photo} />
         </Frame>
         <Frame n={4} title="Post detail" note="Description block, tags, then what the family wrote.">
           <PostDetail post={demo} />
