@@ -12,10 +12,14 @@ export const metadata: Metadata = {
   description: "A small shared space for a family.",
 };
 
+export const viewport = {
+  interactiveWidget: "resizes-content" as const,
+};
+
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${geistSans.variable} h-full antialiased`}>
-      <body className="min-h-full">{children}</body>
+      <body className="h-full">{children}</body>
     </html>
   );
 }

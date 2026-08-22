@@ -2,6 +2,7 @@
 /* eslint-disable @next/next/no-img-element */
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Webcam from "react-webcam";
 import {
@@ -17,7 +18,7 @@ import {
   topTags,
   withinPeriod,
 } from "./lib/data";
-import { loadSaved } from "./lib/store";
+import { loadSaved, savePost } from "./lib/store";
 
 /* ---------- frame ---------- */
 
@@ -25,7 +26,7 @@ export function Phone({ children, className }: { children: React.ReactNode; clas
   return (
     <div
       className={`relative mx-auto w-[390px] max-w-full overflow-hidden bg-bg text-ink ${
-        className ?? "h-dvh"
+        className ?? "h-full"
       }`}
     >
       {children}
@@ -350,16 +351,26 @@ export function PostDetail({
   writing?: boolean;
   backHref?: string;
 }) {
+  const router = useRouter();
   const [replies, setReplies] = useState(post.replies);
   const [tags, setTags] = useState(post.tags);
   const [composing, setComposing] = useState(writing);
   const [draft, setDraft] = useState("");
 
   const send = () => {
-    if (!draft.trim()) return;
-    setReplies([...replies, { who: "Anna", when: "now", text: draft.trim() }]);
-    setDraft("");
-    setComposing(false);
+    const text = draft.trim();
+    if (text) {
+      const next = [...replies, { who: "Anna", when: "now", text }];
+      setReplies(next);
+      savePost({ ...post, replies: next, tags });
+      setDraft("");
+      setComposing(false);
+      return;
+    }
+    if (!composing) {
+      savePost({ ...post, replies, tags });
+      router.push(backHref);
+    }
   };
 
   if (composing) {
@@ -395,7 +406,8 @@ export function PostDetail({
           <button
             type="button"
             onClick={send}
-            className="h-14 w-full rounded-card bg-accent text-body font-medium text-white"
+            disabled={!draft.trim()}
+            className="h-14 w-full rounded-card bg-accent text-body font-medium text-white disabled:opacity-40"
           >
             Send
           </button>
