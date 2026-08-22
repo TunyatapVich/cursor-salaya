@@ -13,7 +13,7 @@ export type Post = {
   replies: Reply[];
 };
 
-const PHOTOS = [
+export const GALLERY = [
   "/photos/laundry.jpg",
   "/photos/night-street.jpg",
   "/photos/fried-rice.jpg",
@@ -29,7 +29,7 @@ const PHOTOS = [
 const photo = (seed: string) => {
   let n = 0;
   for (let i = 0; i < seed.length; i++) n += seed.charCodeAt(i);
-  return PHOTOS[n % PHOTOS.length];
+  return GALLERY[n % GALLERY.length];
 };
 
 const rich: Omit<Post, "id">[] = [

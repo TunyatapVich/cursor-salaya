@@ -7,6 +7,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Webcam from "react-webcam";
 import {
   COMMON_TAGS,
+  GALLERY,
   QUICK_REPLIES,
   type Period,
   type Post,
@@ -151,34 +152,47 @@ function AiBlock({ description }: { description: string }) {
 /* ---------- 1. Upload ---------- */
 
 export function Upload({ onPick }: { onPick?: (url: string) => void }) {
-  const input = useRef<HTMLInputElement>(null);
   const webcamRef = useRef<Webcam>(null);
   const [facingMode, setFacingMode] = useState<"user" | "environment">("user");
-  const [flash, setFlash] = useState(false);
+  const [galleryOpen, setGalleryOpen] = useState(false);
   const [cameraError, setCameraError] = useState(false);
 
   const capture = useCallback(() => {
     if (cameraError) {
-      input.current?.click();
+      setGalleryOpen(true);
       return;
     }
     const image = webcamRef.current?.getScreenshot({ width: 1080, height: 1080 });
     if (image) onPick?.(image);
   }, [cameraError, onPick]);
 
-  const toggleFlash = () => {
-    const next = !flash;
-    setFlash(next);
-    const video = webcamRef.current?.video;
-    const stream = video?.srcObject;
-    if (!(stream instanceof MediaStream)) return;
-    const track = stream.getVideoTracks()[0];
-    void track.applyConstraints({ advanced: [{ torch: next } as MediaTrackConstraintSet] }).catch(() => {});
+  const pickFromGallery = (src: string) => {
+    setGalleryOpen(false);
+    onPick?.(src);
   };
 
   return (
     <Screen>
-      <div className="flex h-full flex-col bg-black text-white">
+      <div className="relative flex h-full flex-col bg-black text-white">
+        {galleryOpen ? (
+          <div className="absolute inset-0 z-10 flex flex-col bg-black">
+            <div className="flex items-center justify-between px-6 pt-5 pb-3">
+              <button type="button" onClick={() => setGalleryOpen(false)} className="text-meta text-white/70">
+                Close
+              </button>
+              <p className="text-meta tracking-wide">Gallery</p>
+              <span className="w-10" aria-hidden />
+            </div>
+            <div className="grid grid-cols-3 gap-0.5 overflow-y-auto pb-8">
+              {GALLERY.map((src) => (
+                <button key={src} type="button" onClick={() => pickFromGallery(src)} className="relative block">
+                  <img src={src} alt="" className="aspect-square w-full object-cover" />
+                </button>
+              ))}
+            </div>
+          </div>
+        ) : null}
+
         <div className="flex items-center justify-between px-6 pt-5">
           <Link href="/archive" aria-label="Family" className="flex size-11 items-center justify-center">
             <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
@@ -202,7 +216,7 @@ export function Upload({ onPick }: { onPick?: (url: string) => void }) {
             {cameraError ? (
               <button
                 type="button"
-                onClick={() => input.current?.click()}
+                onClick={() => setGalleryOpen(true)}
                 className="flex h-full w-full items-center justify-center text-meta text-white/40"
               >
                 Allow camera
@@ -223,15 +237,8 @@ export function Upload({ onPick }: { onPick?: (url: string) => void }) {
         </div>
 
         <div className="flex items-center justify-between px-10 pt-5">
-          <button
-            type="button"
-            onClick={toggleFlash}
-            aria-label="Flash"
-            className={`flex size-11 items-center justify-center ${flash ? "text-[#E8C84A]" : "text-white"}`}
-          >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-              <path d="M13 2 4.8 13.2h6.4L11 22l8.2-11.2h-6.4L13 2Z" />
-            </svg>
+          <button type="button" onClick={() => setGalleryOpen(true)} aria-label="Gallery">
+            <img src={GALLERY[0]} alt="" className="size-11 rounded-[12px] object-cover" />
           </button>
 
           <button
@@ -262,22 +269,6 @@ export function Upload({ onPick }: { onPick?: (url: string) => void }) {
             <path d="M6 9l6 6 6-6" />
           </svg>
         </Link>
-
-        <input
-          ref={input}
-          type="file"
-          accept="image/*"
-          className="hidden"
-          onChange={(e) => {
-            const file = e.target.files?.[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = () => {
-              if (typeof reader.result === "string") onPick?.(reader.result);
-            };
-            reader.readAsDataURL(file);
-          }}
-        />
       </div>
     </Screen>
   );
