@@ -244,11 +244,11 @@ export function Upload({ onPick }: { onPick?: (url: string) => void }) {
 
   return (
     <Screen>
-      <div className="relative flex h-full flex-col bg-black text-white">
+      <div className="relative flex h-full flex-col bg-bg">
         {galleryOpen ? (
-          <div className="absolute inset-0 z-10 flex flex-col bg-black">
+          <div className="absolute inset-0 z-10 flex flex-col bg-bg">
             <div className="flex items-center justify-between px-6 pt-5 pb-3">
-              <button type="button" onClick={() => setGalleryOpen(false)} className="text-meta text-white/70">
+              <button type="button" onClick={() => setGalleryOpen(false)} className="text-meta text-muted">
                 Close
               </button>
               <p className="text-meta tracking-wide">Gallery</p>
@@ -257,7 +257,7 @@ export function Upload({ onPick }: { onPick?: (url: string) => void }) {
             <div className="grid grid-cols-3 gap-0.5 overflow-y-auto pb-8">
               {GALLERY.map((src) => (
                 <button key={src} type="button" onClick={() => pickFromGallery(src)} className="relative block">
-                  <img src={src} alt="" className="aspect-square w-full object-cover" />
+                  <img src={src} alt="" className="aspect-square w-full bg-tint object-cover" />
                 </button>
               ))}
             </div>
@@ -265,7 +265,7 @@ export function Upload({ onPick }: { onPick?: (url: string) => void }) {
         ) : null}
 
         <div className="flex items-center justify-between px-6 pt-5">
-          <Link href="/archive" aria-label="Family" className="flex size-11 items-center justify-center">
+          <Link href="/archive" aria-label="Family" className="flex size-11 items-center justify-center text-ink">
             <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
               <circle cx="8.5" cy="8" r="3.1" />
               <path d="M2.8 18.8c.5-3.4 3.2-5.2 5.7-5.2s5.2 1.8 5.7 5.2" />
@@ -273,7 +273,7 @@ export function Upload({ onPick }: { onPick?: (url: string) => void }) {
               <path d="M13.6 18.8c.4-2.4 2-3.8 3.8-3.8 1.9 0 3.5 1.4 4 3.8" />
             </svg>
           </Link>
-          <Link href="/archive" aria-label="Profile" className="flex size-11 items-center justify-center">
+          <Link href="/archive" aria-label="Profile" className="flex size-11 items-center justify-center text-ink">
             <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden>
               <circle cx="12" cy="12" r="9.2" />
               <circle cx="12" cy="10" r="2.8" />
@@ -283,12 +283,12 @@ export function Upload({ onPick }: { onPick?: (url: string) => void }) {
         </div>
 
         <div className="flex flex-1 items-center px-[18px]">
-          <div className="relative aspect-square w-full overflow-hidden rounded-[40px] bg-neutral-900">
+          <div className="relative aspect-square w-full overflow-hidden rounded-[28px] bg-tint">
             {cameraError ? (
               <button
                 type="button"
                 onClick={() => setGalleryOpen(true)}
-                className="flex h-full w-full items-center justify-center text-meta text-white/40"
+                className="flex h-full w-full items-center justify-center text-meta text-muted"
               >
                 Allow camera
               </button>
@@ -309,23 +309,23 @@ export function Upload({ onPick }: { onPick?: (url: string) => void }) {
 
         <div className="flex items-center justify-between px-10 pt-5">
           <button type="button" onClick={() => setGalleryOpen(true)} aria-label="Gallery">
-            <img src={GALLERY[0]} alt="" className="size-11 rounded-[12px] object-cover" />
+            <img src={GALLERY[0]} alt="" className="size-11 rounded-card border border-line object-cover" />
           </button>
 
           <button
             type="button"
             onClick={capture}
             aria-label="Take photo"
-            className="flex size-[78px] items-center justify-center rounded-full border-[3px] border-[#E8C84A]"
+            className="flex size-[78px] items-center justify-center rounded-full border-[3px] border-accent"
           >
-            <span className="size-[64px] rounded-full bg-white" />
+            <span className="size-[64px] rounded-full bg-surface" />
           </button>
 
           <button
             type="button"
             onClick={() => setFacingMode((m) => (m === "user" ? "environment" : "user"))}
             aria-label="Flip camera"
-            className="flex size-11 items-center justify-center"
+            className="flex size-11 items-center justify-center text-ink"
           >
             <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden>
               <path d="M20 7V4h-3M4 17v3h3" />
@@ -334,7 +334,7 @@ export function Upload({ onPick }: { onPick?: (url: string) => void }) {
           </button>
         </div>
 
-        <Link href="/archive" className="flex flex-col items-center pb-8 pt-4 text-meta tracking-wide">
+        <Link href="/archive" className="flex flex-col items-center pb-8 pt-4 text-meta tracking-wide text-muted">
           History
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="mt-1" aria-hidden>
             <path d="M6 9l6 6 6-6" />
