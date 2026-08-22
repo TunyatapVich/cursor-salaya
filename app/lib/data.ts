@@ -13,115 +13,132 @@ export type Post = {
   replies: Reply[];
 };
 
-// ponytail: placeholder photography. Real posts carry an uploaded file.
-const photo = (seed: string) => `https://picsum.photos/seed/${seed}/800/1000`;
+const PHOTOS = [
+  "/photos/laundry.jpg",
+  "/photos/night-street.jpg",
+  "/photos/fried-rice.jpg",
+  "/photos/campus-walk.jpg",
+  "/photos/campus-path.jpg",
+  "/photos/tom-yum.jpg",
+  "/photos/khao-kha-moo.jpg",
+  "/photos/classroom.jpg",
+  "/photos/painting-night.jpg",
+  "/photos/meiji-milk.jpg",
+];
+
+const photo = (seed: string) => {
+  let n = 0;
+  for (let i = 0; i < seed.length; i++) n += seed.charCodeAt(i);
+  return PHOTOS[n % PHOTOS.length];
+};
 
 const rich: Omit<Post, "id">[] = [
   {
-    photo: photo("tablets"),
+    photo: "/photos/laundry.jpg",
     day: 0,
-    caption: "the new medicine from the hospital",
+    caption: "laundry day",
     description:
-      "A packet of white tablets on a wooden table. The label says to take one tablet after food. There is a blue helmet on the shelf behind, next to a folded towel.",
-    tags: ["medicine", "kitchen"],
+      "A row of silver Speed Queen washing machines in a tiled laundromat. Machine 24 is in front. Someone in a dark shirt stands by a yellow cart, loading a machine.",
+    tags: ["outdoors"],
     replies: [
-      { who: "Anna", when: "7:20 pm", text: "One tablet, after dinner — not before. I'll ring you at seven to check." },
-      { who: "Ben", when: "8:04 pm", text: "That's the same one Dr Owens gave you in June. Keep it by the kettle so you see it." },
+      { who: "Anna", when: "7:20 pm", text: "Don't mix the whites. I'll pick you up when the last load is done." },
+      { who: "Ben", when: "8:04 pm", text: "Machine 24 is the one that actually spins. The others take forever." },
     ],
   },
   {
-    photo: photo("keys-bowl"),
+    photo: "/photos/night-street.jpg",
     day: 0,
     description:
-      "Three keys on a ring in a blue ceramic bowl by a front door. One key has a red plastic cap. A pair of reading glasses is beside the bowl.",
-    tags: ["keys", "hallway"],
+      "A dark street corner at night. Red traffic lights hang over the road. A glowing sign reads 19th, and a parking board shows SPACES 501.",
+    tags: ["outdoors"],
     replies: [],
   },
   {
-    photo: photo("noodle-soup"),
+    photo: "/photos/fried-rice.jpg",
     day: 1,
     caption: "lunch",
     description:
-      "A bowl of noodle soup with sliced spring onion on a green placemat. Steam is rising. A glass of water sits to the right of the bowl.",
+      "A dark blue bowl of fried rice with a fried egg on top, fork and spoon crossed in the bowl. An iPad behind it is playing One Piece on a wooden table.",
     tags: ["food", "kitchen"],
     replies: [
       { who: "Grace", when: "Yesterday", text: "That looks so good. Save me some on Sunday please." },
     ],
   },
   {
-    photo: photo("bank-letter"),
+    photo: "/photos/campus-walk.jpg",
     day: 2,
-    caption: "this came today",
+    caption: "walking back",
     description:
-      "A printed letter on a table. The letterhead reads Northbank. The largest text says Your annual statement. A date near the top reads 14 August.",
-    tags: ["documents"],
+      "A person in a light hoodie and black shorts walking down a tree-lined campus path, Nike bag on one shoulder. Another person walks ahead toward a brick building.",
+    tags: ["outdoors"],
     replies: [
-      { who: "Ben", when: "Wed", text: "Nothing to do with this one — it's just the yearly summary. Put it in the blue folder." },
-      { who: "Anna", when: "Wed", text: "Agreed, no action needed. I'll look at it when I'm over." },
+      { who: "Ben", when: "Wed", text: "Text when you get to the gate." },
+      { who: "Anna", when: "Wed", text: "Hot out. Take the shaded side." },
     ],
   },
   {
-    photo: photo("tomatoes"),
+    photo: "/photos/campus-path.jpg",
     day: 3,
     description:
-      "Six small tomatoes on a windowsill, four red and two still green. Behind them a garden with a wooden fence in afternoon light.",
-    tags: ["outdoors", "food"],
-    replies: [
-      { who: "Grace", when: "Tue", text: "The green ones will turn if you leave them another few days." },
-    ],
-  },
-  {
-    photo: photo("helmet-shelf"),
-    day: 4,
-    caption: "is this the one",
-    description:
-      "A blue cycling helmet on a wooden shelf beside a folded towel and a small basket. A dark green jacket hangs on a hook to the left.",
+      "A long concrete sidewalk between grass and trees, with a red brick building and a silver awning on the right. A few people walk in the distance.",
     tags: ["outdoors"],
     replies: [
-      { who: "Ben", when: "Mon", text: "That's Grace's. Hers is the blue one — mine's the black one in the car." },
+      { who: "Grace", when: "Tue", text: "That's the short way to the hall." },
     ],
   },
   {
-    photo: photo("kettle-plug"),
+    photo: "/photos/tom-yum.jpg",
+    day: 4,
+    caption: "dinner",
+    description:
+      "A white bowl of tom yum with noodles, a fishball, and a lot of green herbs, next to a plate of rice and fried wonton on a dark wooden table.",
+    tags: ["food"],
+    replies: [
+      { who: "Ben", when: "Mon", text: "Ask for less lime next time if it's too sharp." },
+    ],
+  },
+  {
+    photo: "/photos/khao-kha-moo.jpg",
     day: 5,
     description:
-      "A white kettle on a kitchen counter, unplugged, with the cable coiled beside it. A wall socket above the counter is switched off.",
-    tags: ["kitchen"],
+      "A plate of khao kha moo held outdoors: braised pork, a halved egg, and greens on rice. Picnic tables and tree shade in the background.",
+    tags: ["food", "outdoors"],
     replies: [
-      { who: "Anna", when: "Sun", text: "Perfect — that's exactly how to leave it. Thank you." },
+      { who: "Anna", when: "Sun", text: "Eat it while it's hot. The egg is the best bit." },
     ],
   },
   {
-    photo: photo("blue-inhaler"),
+    photo: "/photos/classroom.jpg",
     day: 6,
-    caption: "found it in the drawer",
+    caption: "in class",
     description:
-      "A blue inhaler lying in an open drawer with pens and a tape measure. The label text is small and partly hidden by the drawer edge.",
-    tags: ["medicine", "bedroom"],
+      "A lecture hall screen showing an English worksheet, In-class activity 2 on conditionals. A student with glasses sits in front, looking at a phone.",
+    tags: ["documents"],
     replies: [
-      { who: "Anna", when: "Sat", text: "That's the old one — the date on it has passed. The new one is in the bathroom cabinet, top shelf." },
-      { who: "Ben", when: "Sat", text: "Bin that one so they don't get mixed up." },
+      { who: "Anna", when: "Sat", text: "Second conditional, page 35. You've got this." },
+      { who: "Ben", when: "Sat", text: "Pick the queue-cutting one, it's the easiest to talk about." },
     ],
   },
   {
-    photo: photo("dog-porch"),
+    photo: "/photos/painting-night.jpg",
     day: 8,
     description:
-      "A brown dog lying on a porch in the sun beside an empty water bowl. The wooden boards are worn pale in the middle.",
+      "A folding table on grass at night with a paint palette, brushes in a red cup, and a small round landscape painting. Hands hold a phone at the edge of the frame.",
     tags: ["outdoors"],
     replies: [
-      { who: "Grace", when: "Aug 12", text: "Fill the bowl before you sit down, it's hot this week." },
+      { who: "Grace", when: "Aug 12", text: "Keep that little painting. It's lovely." },
     ],
   },
   {
-    photo: photo("pill-organiser"),
+    photo: "/photos/meiji-milk.jpg",
     day: 11,
+    caption: "desk",
     description:
-      "A weekly pill organiser with seven compartments, open. The Monday, Tuesday and Wednesday compartments are empty; the rest hold two tablets each.",
-    tags: ["medicine", "kitchen"],
+      "A Meiji fat-free milk jug on a wooden desk, next to a white mouse, a black keyboard, and a monitor. Headphones sit behind the keyboard.",
+    tags: ["kitchen"],
     replies: [
-      { who: "Anna", when: "Aug 9", text: "You're up to date. I'll refill the whole thing on Saturday when I'm there." },
-      { who: "Ben", when: "Aug 9", text: "Nice one. Keep it where you can see it." },
+      { who: "Anna", when: "Aug 9", text: "Check the date on the shoulder before you open it." },
+      { who: "Ben", when: "Aug 9", text: "Fat free is the blue one. Don't grab the full cream by mistake." },
     ],
   },
   {
