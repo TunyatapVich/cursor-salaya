@@ -15,7 +15,6 @@ import {
   describePhoto,
   groupPosts,
   hasUnread,
-  posts as allPosts,
   replyCount,
   topTags,
   withinPeriod,
@@ -28,7 +27,7 @@ export function Phone({ children, className }: { children: React.ReactNode; clas
   return (
     <div
       className={`relative mx-auto w-[390px] max-w-full overflow-hidden bg-bg text-ink ${
-        className ?? "h-full"
+        className ?? "h-dvh"
       }`}
     >
       {children}
@@ -37,10 +36,82 @@ export function Phone({ children, className }: { children: React.ReactNode; clas
 }
 
 const Screen = ({ children }: { children: React.ReactNode }) => (
-  <div className="flex h-full flex-col">{children}</div>
+  <div className="relative flex h-full min-h-0 flex-col">{children}</div>
 );
 
 /* ---------- shared bits ---------- */
+
+function PlusIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden>
+      <path d="M12 5v14M5 12h14" />
+    </svg>
+  );
+}
+
+function StoryIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden>
+      <rect x="6" y="4" width="12" height="16" rx="2" />
+      <path d="M4 7v10M20 7v10" />
+    </svg>
+  );
+}
+
+function HashTag({
+  label,
+  on = false,
+  onClick,
+}: {
+  label: string;
+  on?: boolean;
+  onClick?: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`shrink-0 py-2 pr-4 text-name font-medium tracking-[0.02em] ${
+        on ? "text-accent" : "text-muted"
+      }`}
+    >
+      {label === "All" ? "All" : `#${label}`}
+    </button>
+  );
+}
+
+const PERIODS = ["Week", "Month", "Year"] as const;
+
+function PeriodTabs({ value, onChange }: { value: Period; onChange: (p: Period) => void }) {
+  const i = PERIODS.indexOf(value);
+  return (
+    <div
+      role="tablist"
+      aria-label="Time period"
+      className="relative grid grid-cols-3 overflow-hidden rounded-full border border-white/70 bg-white/40 p-[3px] backdrop-blur-xl"
+    >
+      <span
+        aria-hidden
+        className="absolute top-[3px] bottom-[3px] left-[3px] w-[calc((100%-6px)/3)] rounded-full bg-tint transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]"
+        style={{ transform: `translateX(${i * 100}%)` }}
+      />
+      {PERIODS.map((p) => (
+        <button
+          key={p}
+          type="button"
+          role="tab"
+          aria-selected={p === value}
+          onClick={() => onChange(p)}
+          className={`relative z-10 h-11 text-name tracking-[0.02em] ${
+            p === value ? "font-medium text-ink" : "text-muted"
+          }`}
+        >
+          {p}
+        </button>
+      ))}
+    </div>
+  );
+}
 
 function Chip({
   children,
@@ -74,10 +145,7 @@ function TagRow({ tags, onRemove, onAdd }: { tags: string[]; onRemove?: (t: stri
     <div>
       <div className="flex flex-wrap gap-2">
         {tags.map((t) => (
-          <Chip key={t} onClick={() => onRemove?.(t)}>
-            {t}
-            {onRemove ? <span className="ml-1.5 opacity-60">×</span> : null}
-          </Chip>
+          <HashTag key={t} label={t} onClick={() => onRemove?.(t)} />
         ))}
         {onAdd ? (
           <Chip tone="plain" onClick={() => setOpen(!open)}>
@@ -89,9 +157,7 @@ function TagRow({ tags, onRemove, onAdd }: { tags: string[]; onRemove?: (t: stri
         <div className="mt-3 rounded-card border border-line bg-surface p-3">
           <div className="flex flex-wrap gap-2">
             {COMMON_TAGS.filter((t) => !tags.includes(t)).map((t) => (
-              <Chip key={t} tone="plain" onClick={() => { onAdd(t); setOpen(false); }}>
-                {t}
-              </Chip>
+              <HashTag key={t} label={t} onClick={() => { onAdd(t); setOpen(false); }} />
             ))}
           </div>
           <form
@@ -110,7 +176,7 @@ function TagRow({ tags, onRemove, onAdd }: { tags: string[]; onRemove?: (t: stri
               placeholder="something else"
               className="h-12 flex-1 rounded-card border border-line bg-bg px-3 text-body outline-none placeholder:text-muted"
             />
-            <button type="submit" className="h-12 rounded-card bg-accent px-4 text-name text-white">
+            <button type="submit" className="btn-primary h-12 rounded-card px-4 text-name">
               Add
             </button>
           </form>
@@ -338,7 +404,7 @@ function DescribeBody({
             type="button"
             disabled={looking}
             onClick={() => onSave?.({ description: info.description, tags, caption: note.trim() })}
-            className="h-14 w-full rounded-card bg-accent text-body font-medium text-white disabled:opacity-40"
+            className="btn-primary h-14 w-full rounded-card text-body font-medium disabled:opacity-40"
           >
             Save
           </button>
@@ -431,7 +497,7 @@ export function PostDetail({
             type="button"
             onClick={send}
             disabled={!draft.trim()}
-            className="h-14 w-full rounded-card bg-accent text-body font-medium text-white disabled:opacity-40"
+            className="btn-primary h-14 w-full rounded-card text-body font-medium disabled:opacity-40"
           >
             Send
           </button>
@@ -486,7 +552,7 @@ export function PostDetail({
           type="button"
           onClick={send}
           aria-label="Send"
-          className="flex size-14 shrink-0 items-center justify-center rounded-card bg-accent text-white"
+          className="btn-primary flex size-14 shrink-0 items-center justify-center rounded-card"
         >
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
             <path d="M4 12h15M13 6l6 6-6 6" />
@@ -507,7 +573,7 @@ function useFeed() {
     window.addEventListener("saved-posts-changed", sync);
     return () => window.removeEventListener("saved-posts-changed", sync);
   }, []);
-  return [...saved, ...allPosts];
+  return saved;
 }
 
 export function ArchiveGrid() {
@@ -520,44 +586,15 @@ export function ArchiveGrid() {
 
   return (
     <Screen>
-      <div className="flex-1 overflow-y-auto">
-        <header className="sticky top-0 z-10 border-b border-line bg-bg/95 backdrop-blur">
-          <div className="flex items-center justify-between px-5 pt-4">
-            <Link href="/" className="text-meta text-muted">
-              &lsaquo; Add a photo
-            </Link>
-            <Link href="/archive/summary" className="text-meta text-muted">
-              This year
-            </Link>
-          </div>
-          <div className="flex gap-6 px-5 pt-3">
-            {(["Week", "Month", "Year"] as Period[]).map((p) => (
-              <button
-                key={p}
-                type="button"
-                onClick={() => setPeriod(p)}
-                className={`border-b-2 pb-2 text-body ${
-                  p === period ? "border-accent text-ink" : "border-transparent text-muted"
-                }`}
-              >
-                {p}
-              </button>
-            ))}
-          </div>
-          <div className="-mx-0 flex gap-2 overflow-x-auto px-5 py-3">
-            <Chip tone={tag === null ? "on" : "plain"} onClick={() => setTag(null)}>
-              All
-            </Chip>
-            {topTags(inPeriod).map((t) => (
-              <Chip key={t} tone={t === tag ? "on" : "tint"} onClick={() => setTag(t === tag ? null : t)}>
-                {t}
-              </Chip>
-            ))}
-          </div>
+      <div className="min-h-0 flex-1 overflow-y-auto">
+        <header className="sticky top-0 z-10 px-5 pt-4 pb-3">
+          <PeriodTabs value={period} onChange={setPeriod} />
         </header>
 
         {shown.length === 0 ? (
-          <p className="py-16 text-center text-body text-muted">Nothing tagged {tag} yet.</p>
+          <p className="px-8 py-16 text-center text-body text-muted">
+            {tag ? `Nothing tagged ${tag} yet.` : "Add a photo to start this History."}
+          </p>
         ) : null}
 
         {groupPosts(shown).map((group) => (
@@ -573,15 +610,50 @@ export function ArchiveGrid() {
             </div>
           </section>
         ))}
-        <div className="h-24" />
       </div>
 
-      <Link
-        href="/archive/story"
-        className="absolute right-5 bottom-7 flex h-14 items-center rounded-full bg-accent px-5 text-body font-medium text-white"
-      >
-        Story view
-      </Link>
+      <div className="relative z-10 shrink-0">
+        <div
+          className="pointer-events-none absolute inset-x-0 -top-24 h-24 backdrop-blur-xl"
+          style={{
+            maskImage: "linear-gradient(to top, black, transparent)",
+            WebkitMaskImage: "linear-gradient(to top, black, transparent)",
+          }}
+        />
+        <div className="pointer-events-none absolute inset-x-0 -top-24 h-24 bg-gradient-to-t from-bg to-transparent" />
+        <div className="relative bg-bg/85 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 backdrop-blur-xl">
+          <div className="flex gap-2 overflow-x-auto px-5 py-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            <HashTag label="All" on={tag === null} onClick={() => setTag(null)} />
+            {topTags(inPeriod).map((t) => (
+              <HashTag
+                key={t}
+                label={t}
+                on={t === tag}
+                onClick={() => setTag(t === tag ? null : t)}
+              />
+            ))}
+          </div>
+
+          <div className={`grid gap-3 px-5 ${feed.length > 0 ? "grid-cols-2" : "grid-cols-1"}`}>
+            <Link
+              href="/"
+              className="btn-primary flex h-14 items-center justify-center gap-2 rounded-full text-name font-medium"
+            >
+              <PlusIcon />
+              Add a photo
+            </Link>
+            {feed.length > 0 ? (
+              <Link
+                href="/archive/story"
+                className="flex h-14 items-center justify-center gap-2 rounded-full border border-line bg-surface/90 text-name text-ink"
+              >
+                <StoryIcon />
+                Story view
+              </Link>
+            ) : null}
+          </div>
+        </div>
+      </div>
     </Screen>
   );
 }
@@ -589,16 +661,30 @@ export function ArchiveGrid() {
 /* ---------- 7. Archive, story ---------- */
 
 export function ArchiveStory({ start = 0, auto = true }: { start?: number; auto?: boolean }) {
+  const router = useRouter();
   const feed = useFeed();
   const list = withinPeriod(feed, "Month");
   const [i, setI] = useState(Math.min(start, list.length - 1));
   const post = list[i];
 
   useEffect(() => {
-    if (!auto) return;
+    if (!auto || list.length === 0) return;
     const t = setInterval(() => setI((n) => (n + 1) % list.length), 5000);
     return () => clearInterval(t);
   }, [auto, list.length]);
+
+  if (!post) {
+    return (
+      <Screen>
+        <div className="flex h-full flex-col items-center justify-center bg-black px-8 text-center">
+          <p className="text-body text-white/70">Nothing in History yet.</p>
+          <Link href="/" className="mt-6 text-meta text-white/50">
+            Add a photo
+          </Link>
+        </div>
+      </Screen>
+    );
+  }
 
   return (
     <Screen>
@@ -611,23 +697,30 @@ export function ArchiveStory({ start = 0, auto = true }: { start?: number; auto?
           ))}
         </div>
 
-        <Link href="/archive" className="absolute top-6 right-4 text-body text-white/90">
-          Close
-        </Link>
-
         <button
           type="button"
           aria-label="Previous"
           onClick={() => setI((n) => (n - 1 + list.length) % list.length)}
-          className="absolute inset-y-0 left-0 w-1/4"
+          className="absolute top-20 bottom-0 left-0 z-0 w-1/4"
         />
         <button
           type="button"
           aria-label="Next"
           onClick={() => setI((n) => (n + 1) % list.length)}
-          className="absolute inset-y-0 right-0 w-1/4"
+          className="absolute top-20 bottom-0 right-0 z-0 w-1/4"
         />
-        <Link href={`/post/${post.id}`} className="absolute inset-y-0 left-1/4 w-1/2" aria-label="Open post" />
+        <Link href={`/post/${post.id}`} className="absolute top-20 bottom-0 left-1/4 z-0 w-1/2" aria-label="Open post" />
+
+        <button
+          type="button"
+          aria-label="Close"
+          onClick={() => router.push("/archive")}
+          className="absolute top-8 right-3 z-20 flex size-11 items-center justify-center rounded-full border border-white/40 bg-black/35 text-white"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
+            <path d="M6 6l12 12M18 6L6 18" />
+          </svg>
+        </button>
 
         <div className="absolute inset-x-0 bottom-0 bg-black/65 px-5 pt-4 pb-8">
           <p className="text-body text-white">{post.description}</p>

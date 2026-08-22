@@ -6,8 +6,10 @@
   --color-ink: #1e1a17;
   --color-muted: #8b8279;
   --color-line: #e6dfd5;
-  --color-accent: #c2593a;
-  --color-tint: #f6ece6;
+  --color-accent: #ff1b8d;
+  --color-accent-hi: #ff6ec7;
+  --color-accent-lo: #e00070;
+  --color-tint: #ffe4f3;
 
   --radius-card: 12px;
 
@@ -36,3 +38,13 @@ body {
   to { transform: translateX(320%); }
 }
 .sweep { animation: sweep 1.5s ease-in-out infinite; }
+
+.btn-primary {
+  background-image: linear-gradient(
+    180deg,
+    var(--color-accent-hi) 0%,
+    var(--color-accent) 52%,
+    var(--color-accent-lo) 100%
+  );
+  color: #fff;
+}

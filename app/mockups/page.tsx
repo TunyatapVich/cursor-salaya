@@ -33,7 +33,7 @@ export default function Page() {
       <header className="mx-auto max-w-[1700px] pb-10">
         <h1 className="text-title font-medium">Shared memory — screens</h1>
         <p className="mt-2 max-w-[60ch] text-ai text-muted">
-          Take a photo. The AI says what it sees. Save.
+          Take a photo. The AI says what it sees. Save. Archive keeps filters and Add a photo / Story view at the bottom.
         </p>
         <Link href="/" className="mt-3 inline-block text-meta text-accent underline underline-offset-4">
           Open the live flow &rsaquo;
@@ -59,10 +59,10 @@ export default function Page() {
         <Frame n={6} title="Writing a response" note="Photo shrinks, quick-insert chips do the typing.">
           <PostDetail post={demo} writing />
         </Frame>
-        <Frame n={7} title="Archive — grid" note="Period tabs, tag filter, accent dot for unread replies.">
+        <Frame n={7} title="Archive — grid" note="Period pill at the top; tags and Add a photo / Story view at the bottom.">
           <ArchiveGrid />
         </Frame>
-        <Frame n={8} title="Archive — story" note="One post at a time, scrim only behind the text.">
+        <Frame n={8} title="Archive — story" note="Circular X closes; tap zones do not cover it.">
           <ArchiveStory start={2} auto={false} />
         </Frame>
         <Frame n={9} title="Period summary" note="Ends the demo: what a year of small moments adds up to.">
