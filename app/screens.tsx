@@ -17,6 +17,7 @@ import {
   topTags,
   withinPeriod,
 } from "./lib/data";
+import { loadSaved } from "./lib/store";
 
 /* ---------- frame ---------- */
 
@@ -268,7 +269,12 @@ export function Upload({ onPick }: { onPick?: (url: string) => void }) {
           className="hidden"
           onChange={(e) => {
             const file = e.target.files?.[0];
-            if (file) onPick?.(URL.createObjectURL(file));
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = () => {
+              if (typeof reader.result === "string") onPick?.(reader.result);
+            };
+            reader.readAsDataURL(file);
           }}
         />
       </div>
@@ -457,11 +463,23 @@ export function PostDetail({
 
 /* ---------- 6. Archive, grid ---------- */
 
+function useFeed() {
+  const [saved, setSaved] = useState<Post[]>([]);
+  useEffect(() => {
+    const sync = () => setSaved(loadSaved());
+    sync();
+    window.addEventListener("saved-posts-changed", sync);
+    return () => window.removeEventListener("saved-posts-changed", sync);
+  }, []);
+  return [...saved, ...allPosts];
+}
+
 export function ArchiveGrid() {
+  const feed = useFeed();
   const [period, setPeriod] = useState<Period>("Year");
   const [tag, setTag] = useState<string | null>(null);
 
-  const inPeriod = withinPeriod(allPosts, period);
+  const inPeriod = withinPeriod(feed, period);
   const shown = tag ? inPeriod.filter((p) => p.tags.includes(tag)) : inPeriod;
 
   return (
@@ -535,7 +553,8 @@ export function ArchiveGrid() {
 /* ---------- 7. Archive, story ---------- */
 
 export function ArchiveStory({ start = 0, auto = true }: { start?: number; auto?: boolean }) {
-  const list = withinPeriod(allPosts, "Month");
+  const feed = useFeed();
+  const list = withinPeriod(feed, "Month");
   const [i, setI] = useState(Math.min(start, list.length - 1));
   const post = list[i];
 
@@ -588,7 +607,8 @@ export function ArchiveStory({ start = 0, auto = true }: { start?: number; auto?
 /* ---------- 8. Period summary ---------- */
 
 export function PeriodSummary() {
-  const year = withinPeriod(allPosts, "Year");
+  const feed = useFeed();
+  const year = withinPeriod(feed, "Year");
   return (
     <Screen>
       <div className="flex h-full flex-col items-center justify-center px-8 text-center">

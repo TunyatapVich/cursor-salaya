@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { AddContext, Generating, Phone, PostDetail, Upload } from "./screens";
 import { describe, type Post } from "./lib/data";
+import { savePost } from "./lib/store";
 
 export default function Page() {
   const [photo, setPhoto] = useState<string | null>(null);
@@ -13,7 +14,16 @@ export default function Page() {
   const generate = (caption: string) => {
     setGenerating(true);
     setTimeout(() => {
-      setPost({ id: "live", photo: photo!, day: 0, caption: caption || undefined, replies: [], ...describe() });
+      const next: Post = {
+        id: `live-${Date.now()}`,
+        photo: photo!,
+        day: 0,
+        caption: caption || undefined,
+        replies: [],
+        ...describe(),
+      };
+      savePost(next);
+      setPost(next);
       setGenerating(false);
     }, 2200);
   };
@@ -21,7 +31,7 @@ export default function Page() {
   return (
     <Phone>
       {post ? (
-        <PostDetail post={post} backHref="/" />
+        <PostDetail post={post} backHref="/archive" />
       ) : generating && photo ? (
         <Generating photo={photo} />
       ) : photo ? (
