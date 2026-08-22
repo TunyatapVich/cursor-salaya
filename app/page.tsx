@@ -1,43 +1,29 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Phone, Preview, Saved, Upload } from "./screens";
+import { Describe, Phone, Upload } from "./screens";
 import { savePost } from "./lib/store";
 
 export default function Page() {
   const router = useRouter();
   const [photo, setPhoto] = useState<string | null>(null);
-  const [saved, setSaved] = useState(false);
 
-  const keep = () => {
+  const save = (info: { description: string; tags: string[] }) => {
     if (!photo) return;
     savePost({
       id: `live-${Date.now()}`,
       photo,
       day: 0,
-      description: "",
-      tags: [],
       replies: [],
+      ...info,
     });
-    setSaved(true);
+    router.push("/archive");
   };
-
-  useEffect(() => {
-    if (!saved) return;
-    const t = setTimeout(() => router.push("/archive"), 900);
-    return () => clearTimeout(t);
-  }, [saved, router]);
 
   return (
     <Phone>
-      {saved && photo ? (
-        <Saved photo={photo} />
-      ) : photo ? (
-        <Preview photo={photo} onKeep={keep} onRetake={() => setPhoto(null)} />
-      ) : (
-        <Upload onPick={setPhoto} />
-      )}
+      {photo ? <Describe photo={photo} onSave={save} /> : <Upload onPick={setPhoto} />}
     </Phone>
   );
 }

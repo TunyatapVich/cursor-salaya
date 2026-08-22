@@ -12,6 +12,7 @@ import {
   type Period,
   type Post,
   type Reply,
+  describePhoto,
   groupPosts,
   hasUnread,
   posts as allPosts,
@@ -274,66 +275,66 @@ export function Upload({ onPick }: { onPick?: (url: string) => void }) {
   );
 }
 
-/* ---------- 2. Preview ---------- */
+/* ---------- 2. Describe ---------- */
 
-export function Preview({
+export function Describe({
   photo,
-  onKeep,
-  onRetake,
+  onSave,
+  preview,
 }: {
   photo: string;
-  onKeep?: () => void;
-  onRetake?: () => void;
+  onSave?: (info: { description: string; tags: string[] }) => void;
+  preview?: "looking" | "ready";
 }) {
+  const info = describePhoto(photo);
+  const [looking, setLooking] = useState(preview !== "ready");
+
+  useEffect(() => {
+    if (preview) {
+      setLooking(preview === "looking");
+      return;
+    }
+    const t = setTimeout(() => setLooking(false), 1600);
+    return () => clearTimeout(t);
+  }, [photo, preview]);
+
   return (
     <Screen>
       <div className="flex h-full flex-col bg-black text-white">
-        <div className="flex items-center justify-between px-6 pt-5">
-          <button type="button" onClick={onRetake} className="text-meta text-white/70">
-            Retake
-          </button>
-          <span className="text-meta text-white/40">Preview</span>
-          <span className="w-10" aria-hidden />
+        <div className="flex flex-1 items-center px-[18px] pt-8">
+          <img
+            src={photo}
+            alt=""
+            className={`aspect-square w-full rounded-[40px] object-cover ${looking ? "opacity-50" : ""}`}
+          />
         </div>
 
-        <div className="flex flex-1 items-center px-[18px]">
-          <img src={photo} alt="" className="aspect-square w-full rounded-[40px] object-cover" />
-        </div>
-
-        <div className="px-8 pb-12 pt-5">
+        <div className="px-7 pt-6 pb-10">
+          {looking ? (
+            <p className="text-ai text-white/45">Reading the photo&hellip;</p>
+          ) : (
+            <p className="text-ai text-white/90">{info.description}</p>
+          )}
           <button
             type="button"
-            onClick={onKeep}
-            className="h-14 w-full rounded-full bg-white text-body font-medium text-black"
+            disabled={looking}
+            onClick={() => onSave?.(info)}
+            className="mt-6 h-14 w-full rounded-full bg-white text-body font-medium text-black disabled:opacity-30"
           >
-            Send to History
+            Save
           </button>
         </div>
-      </div>
-    </Screen>
-  );
-}
-
-/* ---------- 3. Saved ---------- */
-
-export function Saved({ photo }: { photo: string }) {
-  return (
-    <Screen>
-      <div className="flex h-full flex-col items-center justify-center bg-black px-8 text-white">
-        <img src={photo} alt="" className="size-40 rounded-[28px] object-cover" />
-        <p className="mt-8 text-body">Saved</p>
-        <p className="mt-2 text-meta text-white/45">Opening History&hellip;</p>
       </div>
     </Screen>
   );
 }
 
 export function AddContext({ photo }: { photo: string; onContinue?: (caption: string) => void; onSkip?: () => void }) {
-  return <Preview photo={photo} />;
+  return <Describe photo={photo} preview="ready" />;
 }
 
 export function Generating({ photo }: { photo: string }) {
-  return <Saved photo={photo} />;
+  return <Describe photo={photo} preview="looking" />;
 }
 
 /* ---------- 4 + 5. Post detail, empty state, writing a response ---------- */
