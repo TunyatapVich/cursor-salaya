@@ -10,7 +10,6 @@ import {
   type Period,
   type Post,
   type Reply,
-  dayName,
   groupPosts,
   hasUnread,
   posts as allPosts,
@@ -38,15 +37,6 @@ const Screen = ({ children }: { children: React.ReactNode }) => (
 );
 
 /* ---------- shared bits ---------- */
-
-function CameraIcon() {
-  return (
-    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" aria-hidden>
-      <path d="M3 8.5h3.2l1.4-2h7.8l1.4 2H20a1 1 0 0 1 1 1V18a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5a1 1 0 0 1 1-1Z" />
-      <circle cx="12" cy="13" r="3.6" />
-    </svg>
-  );
-}
 
 function Chip({
   children,
@@ -156,100 +146,96 @@ function AiBlock({ description }: { description: string }) {
   );
 }
 
-/* ---------- 1. Upload (camera) ---------- */
+/* ---------- 1. Upload (Locket-style) ---------- */
 
 export function Upload({ onPick }: { onPick?: (url: string) => void }) {
   const input = useRef<HTMLInputElement>(null);
   const webcamRef = useRef<Webcam>(null);
-  const [facingMode, setFacingMode] = useState<"user" | "environment">("environment");
-  const [cameraError, setCameraError] = useState<string | null>(null);
-
-  const videoConstraints = {
-    facingMode,
-    width: { ideal: 1280 },
-    height: { ideal: 1600 },
-  };
+  const [facingMode, setFacingMode] = useState<"user" | "environment">("user");
+  const [cameraError, setCameraError] = useState(false);
+  const recents = allPosts.slice(0, 4);
 
   const capture = useCallback(() => {
-    const image = webcamRef.current?.getScreenshot({ width: 1280, height: 1600 });
+    const image = webcamRef.current?.getScreenshot({ width: 1080, height: 1080 });
     if (image) onPick?.(image);
   }, [onPick]);
 
-  const flipCamera = () => {
-    setFacingMode((mode) => (mode === "environment" ? "user" : "environment"));
-  };
-
   return (
     <Screen>
-      <div className="flex h-full flex-col px-5 pt-6">
-        <p className="text-meta text-muted">{dayName()}</p>
-        <h1 className="mt-1 text-title font-medium">Add a photo</h1>
-
-        <div className="relative mt-5 aspect-4/5 w-full overflow-hidden rounded-card bg-black">
-          {cameraError ? (
-            <div className="flex h-full flex-col items-center justify-center gap-3 bg-surface px-6 text-center text-muted">
-              <CameraIcon />
-              <p className="text-body text-ink">Camera unavailable</p>
-              <p className="text-meta">{cameraError}</p>
-            </div>
-          ) : (
-            <Webcam
-              ref={webcamRef}
-              audio={false}
-              mirrored={facingMode === "user"}
-              screenshotFormat="image/jpeg"
-              screenshotQuality={0.92}
-              videoConstraints={videoConstraints}
-              onUserMediaError={() =>
-                setCameraError("Allow camera access in your browser, or choose a photo from your library.")
-              }
-              className="h-full w-full object-cover"
-            />
-          )}
-
-          {!cameraError ? (
-            <button
-              type="button"
-              onClick={flipCamera}
-              aria-label="Flip camera"
-              className="absolute top-3 right-3 flex size-11 items-center justify-center rounded-full bg-black/45 text-white backdrop-blur-sm"
-            >
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
-                <path d="M7 7h10M7 17h10M17 7l3 3-3 3M7 17l-3-3 3-3" />
-              </svg>
-            </button>
-          ) : null}
-        </div>
-
-        <div className="mt-5 flex items-center justify-center gap-8">
+      <div className="flex h-full flex-col bg-black text-white">
+        <div className="flex flex-1 flex-col items-center justify-center">
           <button
             type="button"
-            onClick={() => input.current?.click()}
-            className="text-meta text-muted underline underline-offset-4"
+            onClick={cameraError ? () => input.current?.click() : capture}
+            aria-label="Take photo"
+            className="relative size-[292px] overflow-hidden rounded-full shadow-[0_24px_80px_rgba(0,0,0,0.55)] ring-[3px] ring-white"
           >
-            Library
+            {cameraError ? (
+              <span className="flex h-full items-center justify-center bg-neutral-900 px-8 text-center text-meta text-white/50">
+                Allow camera
+              </span>
+            ) : (
+              <Webcam
+                ref={webcamRef}
+                audio={false}
+                mirrored={facingMode === "user"}
+                screenshotFormat="image/jpeg"
+                screenshotQuality={0.92}
+                videoConstraints={{ facingMode, aspectRatio: 1, width: { ideal: 1080 } }}
+                onUserMediaError={() => setCameraError(true)}
+                className="absolute inset-0 h-full w-full object-cover"
+              />
+            )}
           </button>
 
-          {!cameraError ? (
-            <button
-              type="button"
-              onClick={capture}
-              aria-label="Take photo"
-              className="flex size-[72px] items-center justify-center rounded-full border-4 border-accent bg-white p-1"
+          <div className="mt-8 flex items-center -space-x-3">
+            {recents.map((p) => (
+              <Link
+                key={p.id}
+                href={`/post/${p.id}`}
+                className="relative size-12 overflow-hidden rounded-full ring-2 ring-white/90"
+              >
+                <img src={p.photo} alt="" className="h-full w-full object-cover" />
+              </Link>
+            ))}
+            <Link
+              href="/archive"
+              className="relative flex size-12 items-center justify-center rounded-full bg-white/10 text-meta text-white/70 ring-2 ring-white/90"
             >
-              <span className="size-full rounded-full bg-accent" />
-            </button>
-          ) : (
-            <button
-              type="button"
-              onClick={() => input.current?.click()}
-              className="h-14 rounded-card bg-accent px-6 text-body font-medium text-white"
-            >
-              Choose photo
-            </button>
-          )}
+              All
+            </Link>
+          </div>
+        </div>
 
-          <span className="w-14" aria-hidden />
+        <div className="flex items-center justify-between px-8 pb-12">
+          <button type="button" onClick={() => input.current?.click()} aria-label="Photo library">
+            {recents[0] ? (
+              <img src={recents[0].photo} alt="" className="size-11 rounded-[14px] object-cover" />
+            ) : (
+              <span className="block size-11 rounded-[14px] bg-white/15" />
+            )}
+          </button>
+
+          <button
+            type="button"
+            onClick={cameraError ? () => input.current?.click() : capture}
+            aria-label="Shutter"
+            className="flex size-[74px] items-center justify-center rounded-full border-[3px] border-white"
+          >
+            <span className="size-[60px] rounded-full bg-white" />
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setFacingMode((m) => (m === "user" ? "environment" : "user"))}
+            aria-label="Flip camera"
+            className="flex size-11 items-center justify-center text-white"
+          >
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden>
+              <path d="M16 4h4v4M20 4l-5.5 5.5M8 20H4v-4M4 20l5.5-5.5" />
+              <circle cx="12" cy="12" r="3.2" />
+            </svg>
+          </button>
         </div>
 
         <input
@@ -262,11 +248,6 @@ export function Upload({ onPick }: { onPick?: (url: string) => void }) {
             if (file) onPick?.(URL.createObjectURL(file));
           }}
         />
-
-        <div className="flex-1" />
-        <Link href="/archive" className="pb-7 text-center text-meta text-muted underline underline-offset-4">
-          See the archive
-        </Link>
       </div>
     </Screen>
   );
