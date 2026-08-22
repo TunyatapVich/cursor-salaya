@@ -9,14 +9,16 @@ export default function Page() {
   const router = useRouter();
   const [photo, setPhoto] = useState<string | null>(null);
 
-  const save = (info: { description: string; tags: string[] }) => {
+  const save = (info: { description: string; tags: string[]; caption: string }) => {
     if (!photo) return;
     savePost({
       id: `live-${Date.now()}`,
       photo,
       day: 0,
+      caption: info.caption || undefined,
+      description: info.description,
+      tags: info.tags,
       replies: [],
-      ...info,
     });
     router.push("/archive");
   };

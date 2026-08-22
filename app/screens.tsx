@@ -283,11 +283,13 @@ export function Describe({
   preview,
 }: {
   photo: string;
-  onSave?: (info: { description: string; tags: string[] }) => void;
+  onSave?: (info: { description: string; tags: string[]; caption: string }) => void;
   preview?: "looking" | "ready";
 }) {
   const info = describePhoto(photo);
   const [looking, setLooking] = useState(preview !== "ready");
+  const [tags, setTags] = useState(info.tags);
+  const [note, setNote] = useState("");
 
   useEffect(() => {
     if (preview) {
@@ -300,26 +302,45 @@ export function Describe({
 
   return (
     <Screen>
-      <div className="flex h-full flex-col bg-black text-white">
-        <div className="flex flex-1 items-center px-[18px] pt-8">
+      <div className="flex h-full flex-col bg-bg">
+        <div className="px-5 pt-6">
           <img
             src={photo}
             alt=""
-            className={`aspect-square w-full rounded-[40px] object-cover ${looking ? "opacity-50" : ""}`}
+            className={`aspect-square w-full rounded-[28px] bg-tint object-cover ${looking ? "opacity-50" : ""}`}
           />
         </div>
 
-        <div className="px-7 pt-6 pb-10">
+        <div className="flex-1 overflow-y-auto px-5 pt-5">
+          <p className="text-meta text-muted">What&rsquo;s in this photo</p>
           {looking ? (
-            <p className="text-ai text-white/45">Reading the photo&hellip;</p>
+            <p className="mt-2 text-ai text-muted">Reading the photo&hellip;</p>
           ) : (
-            <p className="text-ai text-white/90">{info.description}</p>
+            <>
+              <p className="mt-2 text-ai">{info.description}</p>
+              <div className="mt-4">
+                <TagRow
+                  tags={tags}
+                  onRemove={(t) => setTags(tags.filter((x) => x !== t))}
+                  onAdd={(t) => setTags(tags.includes(t) ? tags : [...tags, t])}
+                />
+              </div>
+              <input
+                value={note}
+                onChange={(e) => setNote(e.target.value)}
+                placeholder="Add a note if you want"
+                className="mt-4 h-14 w-full rounded-card border border-line bg-surface px-4 text-body outline-none placeholder:text-muted"
+              />
+            </>
           )}
+        </div>
+
+        <div className="shrink-0 px-5 pt-3 pb-7">
           <button
             type="button"
             disabled={looking}
-            onClick={() => onSave?.(info)}
-            className="mt-6 h-14 w-full rounded-full bg-white text-body font-medium text-black disabled:opacity-30"
+            onClick={() => onSave?.({ description: info.description, tags, caption: note.trim() })}
+            className="h-14 w-full rounded-card bg-accent text-body font-medium text-white disabled:opacity-40"
           >
             Save
           </button>
