@@ -2,7 +2,8 @@
 /* eslint-disable @next/next/no-img-element */
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import Webcam from "react-webcam";
 import {
   COMMON_TAGS,
   QUICK_REPLIES,
@@ -155,44 +156,112 @@ function AiBlock({ description }: { description: string }) {
   );
 }
 
-/* ---------- 1. Upload ---------- */
+/* ---------- 1. Upload (camera) ---------- */
 
 export function Upload({ onPick }: { onPick?: (url: string) => void }) {
   const input = useRef<HTMLInputElement>(null);
+  const webcamRef = useRef<Webcam>(null);
+  const [facingMode, setFacingMode] = useState<"user" | "environment">("environment");
+  const [cameraError, setCameraError] = useState<string | null>(null);
+
+  const videoConstraints = {
+    facingMode,
+    width: { ideal: 1280 },
+    height: { ideal: 1600 },
+  };
+
+  const capture = useCallback(() => {
+    const image = webcamRef.current?.getScreenshot({ width: 1280, height: 1600 });
+    if (image) onPick?.(image);
+  }, [onPick]);
+
+  const flipCamera = () => {
+    setFacingMode((mode) => (mode === "environment" ? "user" : "environment"));
+  };
+
   return (
     <Screen>
       <div className="flex h-full flex-col px-5 pt-6">
         <p className="text-meta text-muted">{dayName()}</p>
         <h1 className="mt-1 text-title font-medium">Add a photo</h1>
 
-        <button
-          type="button"
-          onClick={() => input.current?.click()}
-          className="mt-5 flex aspect-4/5 w-full flex-col items-center justify-center gap-3 rounded-card border border-dashed border-line bg-surface text-muted"
-        >
-          <CameraIcon />
-          <span className="text-body text-ink">Take a photo</span>
-        </button>
+        <div className="relative mt-5 aspect-4/5 w-full overflow-hidden rounded-card bg-black">
+          {cameraError ? (
+            <div className="flex h-full flex-col items-center justify-center gap-3 bg-surface px-6 text-center text-muted">
+              <CameraIcon />
+              <p className="text-body text-ink">Camera unavailable</p>
+              <p className="text-meta">{cameraError}</p>
+            </div>
+          ) : (
+            <Webcam
+              ref={webcamRef}
+              audio={false}
+              mirrored={facingMode === "user"}
+              screenshotFormat="image/jpeg"
+              screenshotQuality={0.92}
+              videoConstraints={videoConstraints}
+              onUserMediaError={() =>
+                setCameraError("Allow camera access in your browser, or choose a photo from your library.")
+              }
+              className="h-full w-full object-cover"
+            />
+          )}
+
+          {!cameraError ? (
+            <button
+              type="button"
+              onClick={flipCamera}
+              aria-label="Flip camera"
+              className="absolute top-3 right-3 flex size-11 items-center justify-center rounded-full bg-black/45 text-white backdrop-blur-sm"
+            >
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
+                <path d="M7 7h10M7 17h10M17 7l3 3-3 3M7 17l-3-3 3-3" />
+              </svg>
+            </button>
+          ) : null}
+        </div>
+
+        <div className="mt-5 flex items-center justify-center gap-8">
+          <button
+            type="button"
+            onClick={() => input.current?.click()}
+            className="text-meta text-muted underline underline-offset-4"
+          >
+            Library
+          </button>
+
+          {!cameraError ? (
+            <button
+              type="button"
+              onClick={capture}
+              aria-label="Take photo"
+              className="flex size-[72px] items-center justify-center rounded-full border-4 border-accent bg-white p-1"
+            >
+              <span className="size-full rounded-full bg-accent" />
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={() => input.current?.click()}
+              className="h-14 rounded-card bg-accent px-6 text-body font-medium text-white"
+            >
+              Choose photo
+            </button>
+          )}
+
+          <span className="w-14" aria-hidden />
+        </div>
 
         <input
           ref={input}
           type="file"
           accept="image/*"
-          capture="environment"
           className="hidden"
           onChange={(e) => {
             const file = e.target.files?.[0];
             if (file) onPick?.(URL.createObjectURL(file));
           }}
         />
-
-        <button
-          type="button"
-          onClick={() => input.current?.click()}
-          className="mt-4 h-14 text-body text-muted underline underline-offset-4"
-        >
-          Choose from library
-        </button>
 
         <div className="flex-1" />
         <Link href="/archive" className="pb-7 text-center text-meta text-muted underline underline-offset-4">
