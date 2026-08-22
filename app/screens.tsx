@@ -146,34 +146,65 @@ function AiBlock({ description }: { description: string }) {
   );
 }
 
-/* ---------- 1. Upload (Locket-style) ---------- */
+/* ---------- 1. Upload ---------- */
 
 export function Upload({ onPick }: { onPick?: (url: string) => void }) {
   const input = useRef<HTMLInputElement>(null);
   const webcamRef = useRef<Webcam>(null);
   const [facingMode, setFacingMode] = useState<"user" | "environment">("user");
+  const [flash, setFlash] = useState(false);
   const [cameraError, setCameraError] = useState(false);
-  const recents = allPosts.slice(0, 4);
 
   const capture = useCallback(() => {
+    if (cameraError) {
+      input.current?.click();
+      return;
+    }
     const image = webcamRef.current?.getScreenshot({ width: 1080, height: 1080 });
     if (image) onPick?.(image);
-  }, [onPick]);
+  }, [cameraError, onPick]);
+
+  const toggleFlash = () => {
+    const next = !flash;
+    setFlash(next);
+    const video = webcamRef.current?.video;
+    const stream = video?.srcObject;
+    if (!(stream instanceof MediaStream)) return;
+    const track = stream.getVideoTracks()[0];
+    void track.applyConstraints({ advanced: [{ torch: next } as MediaTrackConstraintSet] }).catch(() => {});
+  };
 
   return (
     <Screen>
       <div className="flex h-full flex-col bg-black text-white">
-        <div className="flex flex-1 flex-col items-center justify-center">
-          <button
-            type="button"
-            onClick={cameraError ? () => input.current?.click() : capture}
-            aria-label="Take photo"
-            className="relative size-[292px] overflow-hidden rounded-full shadow-[0_24px_80px_rgba(0,0,0,0.55)] ring-[3px] ring-white"
-          >
+        <div className="flex items-center justify-between px-6 pt-5">
+          <Link href="/archive" aria-label="Family" className="flex size-11 items-center justify-center">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+              <circle cx="8.5" cy="8" r="3.1" />
+              <path d="M2.8 18.8c.5-3.4 3.2-5.2 5.7-5.2s5.2 1.8 5.7 5.2" />
+              <circle cx="16.4" cy="8.6" r="2.5" />
+              <path d="M13.6 18.8c.4-2.4 2-3.8 3.8-3.8 1.9 0 3.5 1.4 4 3.8" />
+            </svg>
+          </Link>
+          <Link href="/archive" aria-label="Profile" className="flex size-11 items-center justify-center">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden>
+              <circle cx="12" cy="12" r="9.2" />
+              <circle cx="12" cy="10" r="2.8" />
+              <path d="M7 18c1.1-2.3 2.9-3.4 5-3.4s3.9 1.1 5 3.4" />
+            </svg>
+          </Link>
+        </div>
+
+        <div className="flex flex-1 items-center px-[18px]">
+          <div className="relative aspect-square w-full overflow-hidden rounded-[40px] bg-neutral-900">
             {cameraError ? (
-              <span className="flex h-full items-center justify-center bg-neutral-900 px-8 text-center text-meta text-white/50">
+              <button
+                type="button"
+                onClick={() => input.current?.click()}
+                className="flex h-full w-full items-center justify-center text-meta text-white/40"
+              >
                 Allow camera
-              </span>
+              </button>
             ) : (
               <Webcam
                 ref={webcamRef}
@@ -186,57 +217,49 @@ export function Upload({ onPick }: { onPick?: (url: string) => void }) {
                 className="absolute inset-0 h-full w-full object-cover"
               />
             )}
-          </button>
-
-          <div className="mt-8 flex items-center -space-x-3">
-            {recents.map((p) => (
-              <Link
-                key={p.id}
-                href={`/post/${p.id}`}
-                className="relative size-12 overflow-hidden rounded-full ring-2 ring-white/90"
-              >
-                <img src={p.photo} alt="" className="h-full w-full object-cover" />
-              </Link>
-            ))}
-            <Link
-              href="/archive"
-              className="relative flex size-12 items-center justify-center rounded-full bg-white/10 text-meta text-white/70 ring-2 ring-white/90"
-            >
-              All
-            </Link>
           </div>
         </div>
 
-        <div className="flex items-center justify-between px-8 pb-12">
-          <button type="button" onClick={() => input.current?.click()} aria-label="Photo library">
-            {recents[0] ? (
-              <img src={recents[0].photo} alt="" className="size-11 rounded-[14px] object-cover" />
-            ) : (
-              <span className="block size-11 rounded-[14px] bg-white/15" />
-            )}
+        <div className="flex items-center justify-between px-10 pt-5">
+          <button
+            type="button"
+            onClick={toggleFlash}
+            aria-label="Flash"
+            className={`flex size-11 items-center justify-center ${flash ? "text-[#E8C84A]" : "text-white"}`}
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+              <path d="M13 2 4.8 13.2h6.4L11 22l8.2-11.2h-6.4L13 2Z" />
+            </svg>
           </button>
 
           <button
             type="button"
-            onClick={cameraError ? () => input.current?.click() : capture}
-            aria-label="Shutter"
-            className="flex size-[74px] items-center justify-center rounded-full border-[3px] border-white"
+            onClick={capture}
+            aria-label="Take photo"
+            className="flex size-[78px] items-center justify-center rounded-full border-[3px] border-[#E8C84A]"
           >
-            <span className="size-[60px] rounded-full bg-white" />
+            <span className="size-[64px] rounded-full bg-white" />
           </button>
 
           <button
             type="button"
             onClick={() => setFacingMode((m) => (m === "user" ? "environment" : "user"))}
             aria-label="Flip camera"
-            className="flex size-11 items-center justify-center text-white"
+            className="flex size-11 items-center justify-center"
           >
             <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden>
-              <path d="M16 4h4v4M20 4l-5.5 5.5M8 20H4v-4M4 20l5.5-5.5" />
-              <circle cx="12" cy="12" r="3.2" />
+              <path d="M20 7V4h-3M4 17v3h3" />
+              <path d="M19.2 4.8A9 9 0 0 0 5.2 8.4M4.8 19.2A9 9 0 0 0 18.8 15.6" />
             </svg>
           </button>
         </div>
+
+        <Link href="/archive" className="flex flex-col items-center pb-8 pt-4 text-meta tracking-wide">
+          History
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="mt-1" aria-hidden>
+            <path d="M6 9l6 6 6-6" />
+          </svg>
+        </Link>
 
         <input
           ref={input}
