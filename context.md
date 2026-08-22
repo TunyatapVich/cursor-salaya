@@ -37,8 +37,8 @@ Everything a person needs to do comes from another person.
 Every post carries tags. Tags are what make the archive searchable later without a search engine.
 
 The AI proposes tags from the photo — medicine, kitchen, outdoors, documents, keys, food.
-Tags appear as a row of chips under the description, in a light tinted style.
-Each chip is tappable to remove. A + Add tag chip at the end opens a short list of common tags plus a free text field.
+Tags appear as a row of hashtags under the description — #kitchen, no chip background, 15px medium.
+Each tag is tappable to remove. A + Add tag chip at the end opens a short list of common tags plus a free text field.
 Tags are never required. A post with no tags is fine.
 In the archive, tapping any tag filters the whole archive to that tag.
 
@@ -46,7 +46,7 @@ Keep the tag vocabulary small and concrete. Nouns and rooms, not moods.
 
 5. Screens
 
-Mobile first, single column, 390px viewport. Warm off-white background, one accent colour, photos are the loudest element, hairline borders, 12px rounded corners, no gradients or shadows. Body text 18px minimum, buttons at least 56px tall with text labels, one primary action per screen, no tab bar and no hamburger menu.
+Mobile first, single column, 390px viewport. Warm off-white background, magenta as the one accent colour. Primary buttons use a vertical magenta gradient (light to deep), not a flat fill. Photos are the loudest element, hairline borders, 12px rounded corners, no shadows. Body text 18px minimum, buttons at least 56px tall with text labels, one primary action per screen, no hamburger menu. Archive is the only screen with bottom chrome — tags and Add a photo / Story view over a gradient blur. Week/Month/Year is a pill in the archive header. Other screens have no tab bar.
 
 Screen 1 — Upload
 
@@ -86,7 +86,7 @@ Top to bottom:
 The photo, full width, rounded, roughly 4:5
 The poster's own line if they wrote one, in 18px regular text
 A visually distinct block for the AI description — light tinted background, hairline border, no rounded left-only corners. A small label above it reads What's in this photo in 13px muted text. The description itself is 17px, three to five sentences, plain language. Example: A packet of white tablets on a wooden table. The label says to take one tablet after food. There is a blue helmet on the shelf behind, next to a folded towel.
-A row of tag chips
+A row of hashtag labels (#kitchen), no background, 15px medium
 A hairline divider
 Section label: From your family in 13px muted text
 A list of responses. Each response is a row: a small circular avatar with initials, the person's name in 15px medium, the time in 13px muted, and the response text in 18px regular below. Responses are stacked with generous spacing, separated by hairlines, not bubbles.
@@ -109,19 +109,20 @@ These chips matter — they let a busy person respond in one tap.
 
 Screen 6 — Archive, grid view
 
-The default archive view. Reached from a quiet link, not a nav bar.
+The default archive view. Reached from the quiet archive link on Upload.
 
-A sticky header with the period selector: three text tabs, Week, Month, Year, current one underlined in the accent colour
-Below it, a horizontally scrolling row of tag chips for filtering
+A sticky header with a three-segment iOS pill: Week, Month, Year. The current period sits on a white inner pill.
 Then a dense photo grid, three columns, small gaps, square crops, no captions. This should feel like the iOS Photos app — the point is volume, seeing that a lot has accumulated.
 Date headings between sections: This week, March, February
 Posts that have unread family responses show a small accent dot in the corner of the thumbnail
-A floating button at the bottom right to switch to story view
+
+Overlaid at the bottom on a fading blur (no solid bar): tag chips, then two separate buttons — Add a photo (primary, accent fill) and Story view (quiet outline).
 Screen 7 — Archive, story view
 
 The same content in a different shape. Full screen, one post at a time, swiped horizontally like Instagram stories.
 
 Progress bars across the top showing position within the current day or period
+A circular X in the top-right corner, above the tap zones, dismisses back to the archive grid
 The photo fills the screen, edge to edge
 A gradient-free dark scrim only at the very bottom, behind the text, so it stays readable
 Below the photo: the short description in 18px, then the number of family responses in 13px muted text, e.g. 2 replies
