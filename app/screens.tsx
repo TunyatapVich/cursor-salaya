@@ -15,7 +15,6 @@ import {
   describePhoto,
   groupPosts,
   hasUnread,
-  posts as allPosts,
   replyCount,
   topTags,
   withinPeriod,
@@ -501,7 +500,7 @@ function useFeed() {
     window.addEventListener("saved-posts-changed", sync);
     return () => window.removeEventListener("saved-posts-changed", sync);
   }, []);
-  return [...saved, ...allPosts];
+  return saved;
 }
 
 export function ArchiveGrid() {
@@ -551,7 +550,9 @@ export function ArchiveGrid() {
         </header>
 
         {shown.length === 0 ? (
-          <p className="py-16 text-center text-body text-muted">Nothing tagged {tag} yet.</p>
+          <p className="px-8 py-16 text-center text-body text-muted">
+            {tag ? `Nothing tagged ${tag} yet.` : "Add a photo to start this History."}
+          </p>
         ) : null}
 
         {groupPosts(shown).map((group) => (
@@ -570,12 +571,14 @@ export function ArchiveGrid() {
         <div className="h-24" />
       </div>
 
-      <Link
-        href="/archive/story"
-        className="absolute right-5 bottom-7 flex h-14 items-center rounded-full bg-accent px-5 text-body font-medium text-white"
-      >
-        Story view
-      </Link>
+      {feed.length > 0 ? (
+        <Link
+          href="/archive/story"
+          className="absolute right-5 bottom-7 flex h-14 items-center rounded-full bg-accent px-5 text-body font-medium text-white"
+        >
+          Story view
+        </Link>
+      ) : null}
     </Screen>
   );
 }
@@ -589,10 +592,23 @@ export function ArchiveStory({ start = 0, auto = true }: { start?: number; auto?
   const post = list[i];
 
   useEffect(() => {
-    if (!auto) return;
+    if (!auto || list.length === 0) return;
     const t = setInterval(() => setI((n) => (n + 1) % list.length), 5000);
     return () => clearInterval(t);
   }, [auto, list.length]);
+
+  if (!post) {
+    return (
+      <Screen>
+        <div className="flex h-full flex-col items-center justify-center bg-black px-8 text-center">
+          <p className="text-body text-white/70">Nothing in History yet.</p>
+          <Link href="/" className="mt-6 text-meta text-white/50">
+            Add a photo
+          </Link>
+        </div>
+      </Screen>
+    );
+  }
 
   return (
     <Screen>
